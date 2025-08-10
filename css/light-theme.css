@@ -1,0 +1,136 @@
+/* ===== LIGHT THEME VARIABLES ===== */
+
+.light-theme {
+    /* Primary Colors */
+    --primary-color: #3b82f6;
+    --primary-color-hover: #2563eb;
+    --primary-color-alpha: rgba(59, 130, 246, 0.1);
+    
+    /* Success, Warning, Error */
+    --success-color: #10b981;
+    --warning-color: #f59e0b;
+    --error-color: #ef4444;
+    
+    --success-bg: rgba(16, 185, 129, 0.1);
+    --warning-bg: rgba(245, 158, 11, 0.1);
+    --error-bg: rgba(239, 68, 68, 0.1);
+    
+    /* Background Colors */
+    --primary-bg: #fafafa;
+    --secondary-bg: #f8fafc;
+    --card-bg: #ffffff;
+    --header-bg: rgba(255, 255, 255, 0.8);
+    --header-bg-rgb: 255, 255, 255;
+    --footer-bg: #f8fafc;
+    --column-header-bg: #f8fafc;
+    --hover-bg: rgba(59, 130, 246, 0.05);
+    --code-bg: #f1f5f9;
+    
+    /* Text Colors */
+    --text-color: #1f2937;
+    --title-color: #111827;
+    --subtitle-color: #6b7280;
+    --label-color: #374151;
+    --code-color: #475569;
+    
+    /* Border & Input Colors */
+    --border-color: #e5e7eb;
+    --input-border: #d1d5db;
+    --input-bg: #ffffff;
+    
+    /* Theme Toggle */
+    --theme-toggle-bg: #f3f4f6;
+    --theme-toggle-border: #e5e7eb;
+    --theme-toggle-indicator: #ffffff;
+    --theme-toggle-position: 2px;
+    
+    /* Shadows */
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    
+    /* Typography */
+    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+}
+
+/* Light Theme Specific Styles */
+.light-theme .theme-icon.dark-icon {
+    opacity: 0.3;
+}
+
+.light-theme .theme-icon.light-icon {
+    opacity: 1;
+}
+
+/* Light theme color card enhancements */
+.light-theme .color-card:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.light-theme .palette-column:hover {
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+}
+
+/* Light theme specific accessibility indicators */
+.light-theme .contrast-pass {
+    background: #dcfce7;
+    color: #166534;
+    border: 1px solid #bbf7d0;
+}
+
+.light-theme .contrast-fail {
+    background: #fee2e2;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+}
+
+/* Light theme export code styling */
+.light-theme .export-code {
+    background: #f8fafc;
+    color: #475569;
+    border: 1px solid #e2e8f0;
+}
+
+/* Light theme input focus states */
+.light-theme .color-input:focus,
+.light-theme .scale-select:focus,
+.light-theme .export-select:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Light theme button states */
+.light-theme .generate-btn:hover {
+    background: #2563eb;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+.light-theme .export-btn:hover {
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);
+}
+
+/* Light theme toast notifications */
+.light-theme .toast {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.light-theme .toast.success {
+    border-left: 4px solid #10b981;
+    background: #ffffff;
+    color: #065f46;
+}
+
+.light-theme .toast.error {
+    border-left: 4px solid #ef4444;
+    background: #ffffff;
+    color: #991b1b;
+}
+
+.light-theme .toast.warning {
+    border-left: 4px solid #f59e0b;
+    background: #ffffff;
+    color: #92400e;
+}

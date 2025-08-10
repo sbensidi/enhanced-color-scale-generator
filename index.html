@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Scale Generator - Create Beautiful, Accessible Color Palettes</title>
+    <meta name="description" content="Generate complete color scales with WCAG AA accessibility validation, dark mode variants, and CSS variables output.">
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/light-theme.css">
+    <link rel="stylesheet" href="css/dark-theme.css">
+    
+    <!-- Preload critical resources -->
+    <link rel="preconnect" href="https://api.color.pizza">
+    
+    <!-- Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="light-theme" id="top">
+    <!-- Header -->
+    <header class="app-header" id="appHeader">
+        <div class="header-content">
+            <div class="header-left-section">
+                <div class="header-title-and-toggle">
+                    <h1 class="app-title">
+                        <svg class="title-icon" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-.99 0-.83.67-1.5 1.5-1.5H16c2.76 0 5-2.24 5-5 0-4.42-4.03-8-9-8z M6.5 13c-.83 0-1.5-.67-1.5-1.5S5.67 10 6.5 10s1.5.67 1.5 1.5S7.33 13 6.5 13zm3-4C8.67 9 8 8.33 8 7.5S8.67 6 9.5 6 11 6.67 11 7.5 10.33 9 9.5 9zm5 0c-.83 0-1.5-.67-1.5-1.5S13.67 6 14.5 6s1.5.67 1.5 1.5S15.33 9 14.5 9zm3 4c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>
+                        </svg>
+                        <span class="title-text-full">Enhanced Color Scale Generator</span>
+                        <span class="title-text-short">ECSG</span>
+                    </h1>
+                </div>
+                
+                <!-- Sticky Header Controls (visible only when scrolled) -->
+                <div class="header-sticky-controls" id="stickyControls">
+                    <span class="sticky-separator">|</span>
+                    
+                    <div class="sticky-control-group">
+                        <label class="sticky-control-label">Color:</label>
+                        <div class="sticky-color-picker-group">
+                            <input type="color" id="stickyColorPicker" class="sticky-color-input" value="#3791c6" title="Change color">
+                            <input 
+                                type="text" 
+                                id="stickyColorPickerText" 
+                                class="sticky-color-picker-text" 
+                                placeholder="#3791c6" 
+                                value="#3791c6"
+                                maxlength="7"
+                                autocomplete="off"
+                                title="Color hex value"
+                            >
+                            <button 
+                                type="button" 
+                                id="stickyColorClear" 
+                                class="sticky-color-clear" 
+                                aria-label="Clear sticky color"
+                                title="Clear color"
+                            >
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="sticky-control-group">
+                        <label class="sticky-control-label">Scale:</label>
+                        <select id="stickyScaleSelect" class="sticky-scale-select" title="Change scale">
+                            <option value="minimal">1 Level</option>
+                            <option value="simple">3 Levels</option>
+                            <option value="standard">5 Levels</option>
+                            <option value="current" selected>7 Levels</option>
+                            <option value="extended">9 Levels</option>
+                        </select>
+                    </div>
+                    
+                    <div class="sticky-control-group">
+                        <label class="sticky-control-label">Accessibility:</label>
+                        <select id="stickyAccessibilitySelect" class="sticky-scale-select" title="Change accessibility mode">
+                            <option value="full" selected>Full (Black + White)</option>
+                            <option value="black-only">Black Text Only</option>
+                            <option value="white-only">White Text Only</option>
+                        </select>
+                    </div>
+                    
+                    <div class="sticky-control-group">
+                        <label class="sticky-control-label">Hide Details:</label>
+                        <button class="sticky-view-toggle" id="stickyViewModeToggle" aria-label="Toggle minimal view" title="Toggle minimal view">
+                            <div class="sticky-toggle-thumb"></div>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Right Actions Container -->
+                <div class="header-right-actions">
+                    <!-- Theme Toggle -->
+                    <div class="header-theme-toggle">
+                        <button class="toggle-track" id="themeToggle" aria-label="Toggle dark mode">
+                            <div class="toggle-thumb">
+                                <svg class="theme-icon" viewBox="0 0 24 24" fill="none">
+                                    <path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0 .39-.39.39-1.03 0-1.41l-1.06-1.06zm1.06-10.96c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z" fill="currentColor"/>
+                                </svg>
+                            </div>
+                        </button>
+                        <span class="toggle-label">Dark Mode</span>
+                    </div>
+                    
+                    <!-- Preview Button -->
+                    <div class="sticky-control-group header-preview-group">
+                        <button class="sticky-preview-btn" id="stickyPreviewBtn" aria-label="Open live preview" title="Open live preview">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                <circle cx="12" cy="12" r="3"/>
+                            </svg>
+                            <span>Preview</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="header-description">
+                <p class="app-subtitle">Transform any color into a professional design system with intelligent scale generation, automatic accessibility fixes, and seamless dark mode support. Simply pick your brand color and get production-ready palettes instantly.</p>
+                <div class="learn-more-wrapper">
+                    <a href="#how-it-works" class="learn-more-link">Learn how it works →</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Application -->
+    <main class="app-main">
+        
+        <!-- Input Section -->
+        <section class="input-section">
+            <div class="input-container">
+                <label class="input-label">
+                    Scale Settings
+                </label>
+                
+                <!-- Combined Controls Row -->
+                <div class="combined-controls-row">
+                    <!-- Color Picker Group -->
+                    <div class="color-picker-container">
+                        <label class="config-label">Select Color (Level 400):</label>
+                        <div class="color-picker-group">
+                        <input 
+                            type="color" 
+                            id="colorPicker" 
+                            class="color-picker"
+                            value="#3791c6"
+                        >
+                        <input 
+                            type="text" 
+                            id="colorPickerText" 
+                            class="color-picker-text" 
+                            placeholder="#3791c6" 
+                            value="#3791c6"
+                            maxlength="7"
+                            autocomplete="off"
+                        >
+                        <button 
+                            type="button" 
+                            id="colorPickerClear" 
+                            class="color-picker-clear" 
+                            aria-label="Clear color"
+                            title="Clear color"
+                        >
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                        </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Scale Configuration -->
+                    <div class="scale-config">
+                        <label class="config-label">Scale Configuration:</label>
+                        <div class="scale-controls-row">
+                            <div class="segmented-control" id="scaleSegmentedControl">
+                                <input type="radio" name="scaleRange" value="minimal" class="segment-input" id="scale-minimal">
+                                <label for="scale-minimal" class="segment-label" data-levels="1">Minimal (1)</label>
+                                
+                                <input type="radio" name="scaleRange" value="simple" class="segment-input" id="scale-simple">
+                                <label for="scale-simple" class="segment-label" data-levels="3">Simple (3)</label>
+                                
+                                <input type="radio" name="scaleRange" value="standard" class="segment-input" id="scale-standard">
+                                <label for="scale-standard" class="segment-label" data-levels="5">Standard (5)</label>
+                                
+                                <input type="radio" name="scaleRange" value="current" class="segment-input" id="scale-current" checked>
+                                <label for="scale-current" class="segment-label" data-levels="7">Current (7)</label>
+                                
+                                <input type="radio" name="scaleRange" value="extended" class="segment-input" id="scale-extended">
+                                <label for="scale-extended" class="segment-label" data-levels="9">Extended (9)</label>
+                                
+                                <div class="segment-indicator" id="segmentIndicator"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Accessibility Mode Configuration -->
+                    <div class="accessibility-mode-config">
+                        <label class="config-label">Accessibility Mode:</label>
+                        <div class="accessibility-controls-row">
+                            <div class="segmented-control" id="accessibilitySegmentedControl">
+                                <input type="radio" name="accessibilityMode" value="full" class="segment-input" id="accessibility-full" checked>
+                                <label for="accessibility-full" class="segment-label">Full (Black + White)</label>
+                                
+                                <input type="radio" name="accessibilityMode" value="black-only" class="segment-input" id="accessibility-black">
+                                <label for="accessibility-black" class="segment-label">Black Text Only</label>
+                                
+                                <input type="radio" name="accessibilityMode" value="white-only" class="segment-input" id="accessibility-white">
+                                <label for="accessibility-white" class="segment-label">White Text Only</label>
+                                
+                                <div class="segment-indicator" id="accessibilityIndicator"></div>
+                            </div>
+                            
+                            <!-- View Mode Toggle -->
+                            <div class="view-mode-toggle">
+                                <button class="toggle-track" id="viewModeToggle" aria-label="Toggle minimal view">
+                                    <div class="toggle-thumb"></div>
+                                </button>
+                                <span class="toggle-label">Hide Details</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Color Scale Display -->
+        <section class="palette-section">
+            <div class="palette-container">
+                <!-- Loading State -->
+                <div id="loadingState" class="loading-state hidden">
+                    <div class="loading-spinner"></div>
+                    <p>Generating color scale...</p>
+                </div>
+
+                <!-- Error State -->
+                <div id="errorState" class="error-state hidden">
+                    <div class="error-icon">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
+                            <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z" fill="currentColor"/>
+                        </svg>
+                    </div>
+                    <p class="error-message">Please enter a valid HEX color code (e.g., #3791c6)</p>
+                </div>
+
+                <!-- Palette Grid -->
+                <div id="paletteGrid" class="palette-grid-dynamic">
+                    <!-- Original Scale Column -->
+                    <div class="palette-column" id="originalColumn">
+                        <div class="column-header">
+                            <h3 class="column-title" id="originalColumnTitle">Splish Splash Color Scale</h3>
+                            <div class="accessibility-indicator not-accessible" id="originalAccessibilityIndicator">
+                                Not Accessible
+                            </div>
+                            <div class="accessibility-summary" id="originalAccessibilitySummary">
+                                <span class="base-accessibility" id="baseAccessibility">Base Color: Accessible</span>
+                            </div>
+                        </div>
+                        <div class="color-cards" id="originalCards">
+                            <!-- Color cards will be generated here -->
+                        </div>
+                    </div>
+
+                    <!-- Accessible Light Mode Column -->
+                    <div class="palette-column hidden" id="accessibleLightColumn">
+                        <div class="column-header">
+                            <h3 class="column-title" id="accessibleLightTitle">Accessible Alternative</h3>
+                            <div class="accessibility-indicator accessible">
+                                Accessible
+                            </div>
+                            <div class="accessibility-summary">
+                                <span class="base-accessibility accessible">Base Color: Level 400 Accessible (All 4 Criteria)</span>
+                            </div>
+                        </div>
+                        <div class="color-cards" id="accessibleLightCards">
+                            <!-- Accessible light mode color cards will be generated here -->
+                        </div>
+                    </div>
+
+                    <!-- Accessible Dark Mode Column -->
+                    <div class="palette-column hidden" id="accessibleDarkColumn">
+                        <div class="column-header">
+                            <h3 class="column-title" id="accessibleDarkTitle">Dark Mode - Accessible Alternative</h3>
+                            <div class="accessibility-indicator accessible">
+                                Accessible
+                            </div>
+                            <div class="accessibility-summary">
+                                <span class="base-accessibility accessible">Base Color: Level 400 Accessible (All 4 Criteria)</span>
+                            </div>
+                        </div>
+                        <div class="color-cards" id="accessibleDarkCards">
+                            <!-- Accessible dark mode color cards will be generated here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Live Preview Section (temporarily hidden) -->
+        <section class="live-preview-section hidden" id="livePreviewSection">
+            <div class="preview-container">
+                <h3 class="preview-title">Live Component Preview</h3>
+                <p class="preview-subtitle">See how your colors work in real UI components</p>
+                
+                <div class="preview-grid">
+                    <!-- Buttons Preview -->
+                    <div class="preview-section">
+                        <h4 class="section-title">Buttons & Actions</h4>
+                        <div class="component-group">
+                            <button class="btn-primary preview-btn">Primary Button</button>
+                            <button class="btn-secondary preview-btn">Secondary</button>
+                            <button class="btn-outline preview-btn">Outline</button>
+                            <button class="btn-ghost preview-btn">Ghost</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Forms Preview -->
+                    <div class="preview-section">
+                        <h4 class="section-title">Forms & Inputs</h4>
+                        <div class="component-group">
+                            <input type="text" class="form-input preview-input" placeholder="Normal input" />
+                            <input type="text" class="form-input preview-input focused" placeholder="Focused state" />
+                            <input type="text" class="form-input preview-input error" placeholder="Error state" />
+                            <select class="form-select preview-select">
+                                <option>Select option</option>
+                                <option>Option 1</option>
+                                <option>Option 2</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Cards Preview -->
+                    <div class="preview-section">
+                        <h4 class="section-title">Cards & Containers</h4>
+                        <div class="component-group">
+                            <div class="preview-card">
+                                <h5 class="card-title">Card Title</h5>
+                                <p class="card-text">This is a sample card with your color scheme applied.</p>
+                                <button class="card-action preview-btn">Action</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Alerts Preview -->
+                    <div class="preview-section">
+                        <h4 class="section-title">Alerts & Messages</h4>
+                        <div class="component-group">
+                            <div class="alert alert-success preview-alert" role="alert">
+                                <strong>Success!</strong> Your action was completed successfully.
+                            </div>
+                            <div class="alert alert-warning preview-alert" role="alert">
+                                <strong>Warning!</strong> Please review your input.
+                            </div>
+                            <div class="alert alert-error preview-alert" role="alert">
+                                <strong>Error!</strong> Something went wrong.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Typography Preview -->
+                    <div class="preview-section">
+                        <h4 class="section-title">Typography & Text</h4>
+                        <div class="component-group">
+                            <h1 class="preview-heading-1">Main Heading (H1)</h1>
+                            <h2 class="preview-heading-2">Section Heading (H2)</h2>
+                            <h3 class="preview-heading-3">Subsection (H3)</h3>
+                            <p class="preview-paragraph">
+                                This is a paragraph of body text that demonstrates how your color scheme works with different text elements. 
+                                <a href="#" class="preview-link">Here's a link</a> within the text.
+                            </p>
+                            <p class="preview-muted">Muted text for secondary information.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Navigation Preview -->
+                    <div class="preview-section">
+                        <h4 class="section-title">Navigation</h4>
+                        <div class="component-group">
+                            <nav class="preview-nav">
+                                <a href="#" class="nav-link active">Home</a>
+                                <a href="#" class="nav-link">Products</a>
+                                <a href="#" class="nav-link">About</a>
+                                <a href="#" class="nav-link">Contact</a>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Preview Controls -->
+                <div class="preview-controls">
+                    <label class="control-label">
+                        <input type="checkbox" id="previewDarkMode" class="control-checkbox">
+                        Preview in Dark Mode
+                    </label>
+                    <label class="control-label">
+                        <input type="checkbox" id="previewAccessible" class="control-checkbox">
+                        Use Accessible Colors
+                    </label>
+                </div>
+            </div>
+        </section>
+
+        <!-- Export Section -->
+        <section class="export-section hidden" id="exportSection">
+            <div class="export-container">
+                <h3 class="export-title">Export Your Color Scale</h3>
+                
+                <div class="export-options">
+                    <label for="exportFormat" class="export-label">Export Format:</label>
+                    <select id="exportFormat" class="export-select">
+                        <option value="css-variables">CSS Variables</option>
+                        <option value="scss-variables">SCSS Variables</option>
+                        <option value="tailwind-config">Tailwind Config</option>
+                        <option value="figma-tokens">Figma Design Tokens</option>
+                        <option value="adobe-ase">Adobe ASE (Color Swatches)</option>
+                        <option value="sketch-palette">Sketch Palette</option>
+                        <option value="json">JSON (Detailed)</option>
+                        <option value="js-object">JavaScript Object</option>
+                        <option value="swift-colors">Swift Color Extension</option>
+                        <option value="android-colors">Android Colors XML</option>
+                    </select>
+                    
+                    <div class="export-mode-options">
+                        <label class="export-checkbox-label">
+                            <input type="checkbox" id="includeDarkMode" class="export-checkbox" checked>
+                            <span class="checkbox-text">Include Dark Mode Scale</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="export-actions">
+                    <button id="copyExportBtn" class="export-btn copy-btn">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                            <path d="M16 1H4C2.9 1 2 1.9 2 3v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" fill="currentColor"/>
+                        </svg>
+                        Copy to Clipboard
+                    </button>
+                    <button id="downloadExportBtn" class="export-btn download-btn">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                            <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" fill="currentColor"/>
+                        </svg>
+                        Download File
+                    </button>
+                </div>
+
+                <div class="export-preview">
+                    <pre id="exportOutput" class="export-code"></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- How It Works Section -->
+        <section class="export-section" id="how-it-works">
+            <div class="export-container">
+                <h3 class="export-title">How the Color Scale Generator Works</h3>
+                
+                <div class="how-it-works-content">
+                    <div class="features-overview">
+                        <h4 class="features-subtitle">Core Features</h4>
+                        <div class="features-grid">
+                            <div class="feature-block">
+                                <strong>
+                                    <svg class="feature-icon" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-.99 0-.83.67-1.5 1.5-1.5H16c2.76 0 5-2.24 5-5 0-4.42-4.03-8-9-8z M6.5 13c-.83 0-1.5-.67-1.5-1.5S5.67 10 6.5 10s1.5.67 1.5 1.5S7.33 13 6.5 13zm3-4C8.67 9 8 8.33 8 7.5S8.67 6 9.5 6 11 6.67 11 7.5 10.33 9 9.5 9zm5 0c-.83 0-1.5-.67-1.5-1.5S13.67 6 14.5 6s1.5.67 1.5 1.5S15.33 9 14.5 9zm3 4c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>
+                                    </svg>
+                                    Scale Generation
+                                </strong>
+                                <p>Choose your base color and scale configuration (1, 3, 5, 7, or 9 levels). The generator creates harmonious color variations using advanced HSL interpolation.</p>
+                            </div>
+                            
+                            <div class="feature-block">
+                                <strong>
+                                    <svg class="feature-icon" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M12 2c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm9 7h-6v13h-2v-6h-2v6H9V9H3V7h18v2z"/>
+                                    </svg>
+                                    Accessibility First
+                                </strong>
+                                <p>Level 400 is automatically validated against all WCAG AA criteria (normal/large text × black/white backgrounds). The entire color scale is built from this accessibility-verified base color.</p>
+                            </div>
+                            
+                            <div class="feature-block">
+                                <strong>
+                                    <svg class="feature-icon" viewBox="0 0 24 24" fill="none">
+                                        <circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="1.5"/>
+                                        <line x1="12" y1="1" x2="12" y2="3" stroke="currentColor" stroke-width="1.5"/>
+                                        <line x1="12" y1="21" x2="12" y2="23" stroke="currentColor" stroke-width="1.5"/>
+                                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" stroke="currentColor" stroke-width="1.5"/>
+                                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" stroke="currentColor" stroke-width="1.5"/>
+                                        <line x1="1" y1="12" x2="3" y2="12" stroke="currentColor" stroke-width="1.5"/>
+                                        <line x1="21" y1="12" x2="23" y2="12" stroke="currentColor" stroke-width="1.5"/>
+                                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" stroke="currentColor" stroke-width="1.5"/>
+                                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" stroke="currentColor" stroke-width="1.5"/>
+                                        <path d="M12 7a5 5 0 0 0 0 10V7z" fill="currentColor"/>
+                                    </svg>
+                                    Smart Dark Mode
+                                </strong>
+                                <p>When your base color doesn't pass all accessibility tests, the tool generates accessible light and dark mode alternatives automatically.</p>
+                            </div>
+                            
+                            <div class="feature-block">
+                                <strong>
+                                    <svg class="feature-icon" viewBox="0 0 24 24" fill="none">
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke="currentColor" stroke-width="1.5"/>
+                                        <polyline points="7,10 12,15 17,10" stroke="currentColor" stroke-width="1.5"/>
+                                        <line x1="12" y1="15" x2="12" y2="3" stroke="currentColor" stroke-width="1.5"/>
+                                    </svg>
+                                    Export Ready
+                                </strong>
+                                <p>Export your color scales in 10+ formats including CSS variables, Tailwind config, Figma tokens, Swift, Android XML, and more.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="technical-overview">
+                        <h4 class="features-subtitle">Technical Implementation</h4>
+                        <div class="technical-grid">
+                            <div class="technical-block">
+                                <strong>Color Science:</strong> Uses HSL color space with piecewise linear interpolation for natural color progression.
+                            </div>
+                            <div class="technical-block">
+                                <strong>Accessibility Testing:</strong> Full WCAG AA compliance testing with 4 criteria validation (normal/large text × black/white backgrounds).
+                            </div>
+                            <div class="technical-block">
+                                <strong>Scale Configurations:</strong> Flexible level systems from minimal (1 level) to extended (9 levels) with proper base level handling.
+                            </div>
+                            <div class="technical-block">
+                                <strong>Real-time Updates:</strong> Debounced color picker input with smooth transitions and copy-to-clipboard functionality.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+        <div class="footer-content">
+            <p class="footer-text">
+                Built with 
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="display: inline-block; vertical-align: middle; color: #e74c3c;">
+                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="currentColor"/>
+                </svg>
+                for designers and developers • 
+                <a href="https://www.w3.org/WAI/WCAG21/Understanding/contrast-minimum.html" target="_blank" rel="noopener">
+                    WCAG AA Compliant
+                </a>
+            </p>
+            <a href="https://www.buymeacoffee.com/shaharb" target="_blank" rel="noopener" class="buy-coffee-btn" aria-label="Buy me a coffee">
+                <img src="./assets/bmc-logo.svg" alt="Buy me a coffee" width="20" height="20">
+                <span>Buy me a coffee</span>
+            </a>
+        </div>
+    </footer>
+    
+    <!-- Floating Back to Top Button -->
+    <button class="back-to-top-btn" id="backToTopBtn" aria-label="Back to top">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M7 14l5-5 5 5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+    </button>
+    
+    <!-- Floating Buy Me Coffee Button -->
+    <a href="https://www.buymeacoffee.com/shaharb" target="_blank" rel="noopener" class="floating-coffee-btn" id="floatingCoffeeBtn" aria-label="Buy me a coffee" title="Support this project - Buy me a coffee">
+        <img src="./assets/bmc-logo.svg" alt="Buy me a coffee" width="20" height="20">
+    </a>
+
+    <!-- Toast Notifications -->
+    <div id="toastContainer" class="toast-container"></div>
+    
+    <!-- Live Preview Lightbox -->
+    <div class="preview-lightbox hidden" id="previewLightbox">
+        <div class="lightbox-backdrop" id="lightboxBackdrop"></div>
+        <div class="lightbox-content">
+            <div class="lightbox-header">
+                <div class="lightbox-header-left">
+                    <h3 class="lightbox-title">Live Component Preview</h3>
+                    <p class="lightbox-subtitle">See how your colors work in real UI components</p>
+                </div>
+                <div class="lightbox-header-right">
+                    <div class="lightbox-dark-mode-toggle">
+                        <button class="toggle-track" id="lightboxDarkModeToggle" aria-label="Toggle dark mode">
+                            <div class="toggle-thumb">
+                                <svg class="theme-icon" viewBox="0 0 24 24" fill="none">
+                                    <path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0 .39-.39.39-1.03 0-1.41l-1.06-1.06zm1.06-10.96c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z" fill="currentColor"/>
+                                </svg>
+                            </div>
+                        </button>
+                        <span class="toggle-label">Dark Mode</span>
+                    </div>
+                    <button class="lightbox-close" id="lightboxClose" aria-label="Close preview">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div class="lightbox-body" id="lightboxBody">
+                <!-- Live preview content will be injected here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Modules -->
+    <script src="js/color-utils.js"></script>
+    <script src="js/accessibility.js"></script>
+    <script src="js/color-spectrum-mapper.js"></script>
+    <script src="js/scale-generator.js"></script>
+    <script src="js/dark-mode-generator.js"></script>
+    <script src="js/color-names-api.js"></script>
+    <script src="js/ui-controller.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
