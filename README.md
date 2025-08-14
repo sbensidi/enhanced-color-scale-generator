@@ -1,3 +1,6 @@
+
+![Uploading Color Scale Generator - Large.gif…]()
+
 # 🎨 Color Scale Generator
 
 Generate beautiful, accessible color palettes for modern design systems with WCAG AA compliance validation, dark mode variants, and multiple export formats.
