@@ -130,20 +130,18 @@ textarea:focus-visible {
 
 /* Ensure proper contrast for all text elements */
 .app-subtitle,
-.learn-more-link,
 .config-label,
 .toggle-label,
 .sticky-control-label {
-    color: #1a1a1a;
-    font-weight: 500;
+    color: #111827;
+    font-weight: 600;
 }
 
 .dark-theme .app-subtitle,
-.dark-theme .learn-more-link,
 .dark-theme .config-label,
 .dark-theme .toggle-label,
 .dark-theme .sticky-control-label {
-    color: #f5f5f5;
+    color: #f9fafb;
 }
 
 /* Better contrast for muted text */
@@ -159,13 +157,23 @@ textarea:focus-visible {
 }
 
 /* Enhanced contrast for links */
-a:not(.btn):not(.button):not(.buy-coffee-btn):not(.floating-coffee-btn):not(.learn-more-link) {
-    color: #2563eb;
-    font-weight: 500;
+a:not(.btn):not(.button):not(.buy-coffee-btn):not(.floating-coffee-btn) {
+    color: #1d4ed8;
+    font-weight: 600;
 }
 
-.dark-theme a:not(.btn):not(.button):not(.buy-coffee-btn):not(.floating-coffee-btn):not(.learn-more-link) {
-    color: #60a5fa;
+.dark-theme a:not(.btn):not(.button):not(.buy-coffee-btn):not(.floating-coffee-btn) {
+    color: #93c5fd;
+}
+
+/* Specific fix for learn-more-link */
+.learn-more-link {
+    color: #1d4ed8 !important;
+    font-weight: 600 !important;
+}
+
+.dark-theme .learn-more-link {
+    color: #93c5fd !important;
 }
 
 /* Improve button contrast */
@@ -341,14 +349,14 @@ th {
 .sticky-control-label,
 .export-label,
 .control-label {
-    color: #374151;
+    color: #111827;
     font-weight: 600;
 }
 
 .dark-theme .sticky-control-label,
 .dark-theme .export-label,
 .dark-theme .control-label {
-    color: #e5e7eb;
+    color: #f9fafb;
 }
 
 /* Improve select dropdown contrast */
@@ -398,22 +406,75 @@ th {
 
 /* Ensure proper text contrast in all states */
 .segment-label {
-    color: #374151;
-    font-weight: 500;
+    color: #111827;
+    font-weight: 600;
 }
 
 .segment-label.active,
 .segment-input:checked + .segment-label {
     color: #ffffff;
-    background-color: #2563eb;
+    background-color: #1d4ed8;
 }
 
 .dark-theme .segment-label {
-    color: #e5e7eb;
+    color: #f9fafb;
 }
 
 .dark-theme .segment-label.active,
 .dark-theme .segment-input:checked + .segment-label {
     color: #ffffff;
-    background-color: #3b82f6;
+    background-color: #2563eb;
+}
+
+/* Fix accessibility indicator colors */
+.accessibility-indicator.not-accessible {
+    background-color: #dc2626;
+    color: #ffffff;
+    font-weight: 700;
+}
+
+.accessibility-indicator.accessible {
+    background-color: #059669;
+    color: #ffffff;
+    font-weight: 700;
+}
+
+/* Fix header contrast issues */
+.app-header,
+.header#appHeader {
+    background-color: #ffffff;
+    color: #111827;
+}
+
+.dark-theme .app-header,
+.dark-theme .header#appHeader {
+    background-color: #111827;
+    color: #f9fafb;
+}
+
+/* Fix body text contrast */
+body {
+    color: #111827;
+    background-color: #ffffff;
+}
+
+.dark-theme body {
+    color: #f9fafb;
+    background-color: #111827;
+}
+
+/* Fix any remaining low contrast elements */
+.base-color-explanation,
+.explanation-text,
+.feature-block p,
+.technical-block {
+    color: #374151;
+    font-weight: 500;
+}
+
+.dark-theme .base-color-explanation,
+.dark-theme .explanation-text,
+.dark-theme .feature-block p,
+.dark-theme .technical-block {
+    color: #d1d5db;
 }
