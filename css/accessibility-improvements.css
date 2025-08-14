@@ -178,24 +178,33 @@ a:not(.btn):not(.button):not(.buy-coffee-btn):not(.floating-coffee-btn):hover {
     text-decoration-thickness: 2px;
 }
 
-/* Coffee button accessibility fixes */
+/* Coffee button accessibility fixes - Override all link styles */
+a.buy-coffee-btn,
+a.floating-coffee-btn,
 .buy-coffee-btn,
 .floating-coffee-btn {
     color: #000 !important; /* Force dark text on yellow background */
     text-decoration: none !important;
 }
 
+a.buy-coffee-btn:hover,
+a.buy-coffee-btn:focus,
+a.buy-coffee-btn:visited,
+a.buy-coffee-btn:active,
+a.floating-coffee-btn:hover,
+a.floating-coffee-btn:focus,
+a.floating-coffee-btn:visited,
+a.floating-coffee-btn:active,
 .buy-coffee-btn:hover,
 .buy-coffee-btn:focus,
-.floating-coffee-btn:hover,
-.floating-coffee-btn:focus {
-    color: #000 !important; /* Maintain dark text on hover */
-    text-decoration: none !important;
-}
-
 .buy-coffee-btn:visited,
-.floating-coffee-btn:visited {
-    color: #000 !important; /* Dark text for visited state */
+.buy-coffee-btn:active,
+.floating-coffee-btn:hover,
+.floating-coffee-btn:focus,
+.floating-coffee-btn:visited,
+.floating-coffee-btn:active {
+    color: #000 !important; /* Maintain dark text in all states */
+    text-decoration: none !important;
 }
 
 /* Tables accessibility (if any) */
