@@ -168,14 +168,34 @@ h6 { font-size: 0.875rem; }
 }
 
 /* Better link styling */
-a:not(.btn):not(.button) {
+a:not(.btn):not(.button):not(.buy-coffee-btn):not(.floating-coffee-btn) {
     color: var(--primary-color, #3b82f6);
     text-decoration-thickness: 1px;
     text-underline-offset: 2px;
 }
 
-a:not(.btn):not(.button):hover {
+a:not(.btn):not(.button):not(.buy-coffee-btn):not(.floating-coffee-btn):hover {
     text-decoration-thickness: 2px;
+}
+
+/* Coffee button accessibility fixes */
+.buy-coffee-btn,
+.floating-coffee-btn {
+    color: #000 !important; /* Force dark text on yellow background */
+    text-decoration: none !important;
+}
+
+.buy-coffee-btn:hover,
+.buy-coffee-btn:focus,
+.floating-coffee-btn:hover,
+.floating-coffee-btn:focus {
+    color: #000 !important; /* Maintain dark text on hover */
+    text-decoration: none !important;
+}
+
+.buy-coffee-btn:visited,
+.floating-coffee-btn:visited {
+    color: #000 !important; /* Dark text for visited state */
 }
 
 /* Tables accessibility (if any) */
