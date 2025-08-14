@@ -770,18 +770,25 @@ body {
     box-shadow: 0 0 0 3px var(--primary-color-alpha);
 }
 
+/* Base color picker styles */
 .color-picker {
-    width: 50px;
-    height: 50px;
     border: none;
-    border-radius: 12px;
     cursor: pointer;
-    transition: transform 0.2s ease;
-    background-color:unset;
-    border-radius: 12px;
+    background: none;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
 }
 
-.color-picker:hover {
+/* Large color picker (main controls) */
+.color-picker-large {
+    width: 50px;
+    height: 50px;
+    border-radius: var(--border-radius-md, 12px);
+    transition: transform 0.2s ease;
+}
+
+.color-picker-large:hover {
     transform: scale(1.05);
 }
 
@@ -1359,16 +1366,11 @@ body.enhanced-algorithms-active .sticky-enhanced-toggle .sticky-toggle-thumb {
     box-sizing: border-box;
 }
 
-.color-picker {
+/* Small color picker (inline controls) */
+.color-picker-small {
     width: 32px;
     height: 32px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    background: none;
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
+    border-radius: var(--border-radius-sm, 6px);
 }
 
 .color-picker::-webkit-color-swatch-wrapper {
@@ -1552,6 +1554,10 @@ body.enhanced-algorithms-active .sticky-enhanced-toggle .sticky-toggle-thumb {
     -webkit-backdrop-filter: blur(10px);
     padding: 0.25rem 0.5rem;
     border-radius: 6px;
+    height: 1.5rem;
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
 }
 
 .minimal-accessibility-full {
@@ -1564,6 +1570,8 @@ body.enhanced-algorithms-active .sticky-enhanced-toggle .sticky-toggle-thumb {
     padding: 0.25rem 0.5rem;
     border-radius: 6px;
     font-size: 0.75rem;
+    height: 1.5rem;
+    box-sizing: border-box;
 }
 
 .minimal-access-group {
@@ -1594,6 +1602,13 @@ body.enhanced-algorithms-active .sticky-enhanced-toggle .sticky-toggle-thumb {
     background: #ffffff;
     color: #000000;
     border: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+/* Remove background for minimal-tests inside white-circle */
+.minimal-score-circle.white-circle .minimal-tests {
+    background: none !important;
+    background-color: transparent !important;
+    color: #000000 !important;
 }
 
 .minimal-tests {
