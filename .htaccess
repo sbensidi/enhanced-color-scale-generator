@@ -1,0 +1,45 @@
+# Security Headers for Apache
+# Note: Some hosting providers may not support all headers
+
+# Prevent framing (clickjacking protection)
+Header always set X-Frame-Options "DENY"
+
+# Prevent MIME sniffing
+Header always set X-Content-Type-Options "nosniff"
+
+# XSS Protection
+Header always set X-XSS-Protection "1; mode=block"
+
+# Permissions Policy (restrict sensitive features)
+Header always set Permissions-Policy "geolocation=(), microphone=(), camera=(), payment=(), usb=()"
+
+# Strict Transport Security (if using HTTPS)
+# Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+
+# Content Security Policy (backup - also set in HTML meta tag)
+# Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://api.color.pizza; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://api.color.pizza; object-src 'none'; base-uri 'self'; form-action 'self';"
+
+# Cache Control for static assets
+<IfModule mod_expires.c>
+    ExpiresActive on
+    ExpiresByType text/css "access plus 1 year"
+    ExpiresByType application/javascript "access plus 1 year"
+    ExpiresByType image/png "access plus 1 year"
+    ExpiresByType image/jpg "access plus 1 year"
+    ExpiresByType image/jpeg "access plus 1 year"
+    ExpiresByType image/gif "access plus 1 year"
+    ExpiresByType image/svg+xml "access plus 1 year"
+</IfModule>
+
+# Gzip compression
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/plain
+    AddOutputFilterByType DEFLATE text/html
+    AddOutputFilterByType DEFLATE text/xml
+    AddOutputFilterByType DEFLATE text/css
+    AddOutputFilterByType DEFLATE application/xml
+    AddOutputFilterByType DEFLATE application/xhtml+xml
+    AddOutputFilterByType DEFLATE application/rss+xml
+    AddOutputFilterByType DEFLATE application/javascript
+    AddOutputFilterByType DEFLATE application/x-javascript
+</IfModule>
