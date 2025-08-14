@@ -154,17 +154,19 @@
                     </div>
                     
                     <div class="sticky-control-group">
-                        <label class="sticky-control-label">Enhanced Mode:</label>
-                        <button class="sticky-enhanced-toggle" id="stickyEnhancedAlgorithmsToggle" aria-label="Toggle enhanced mode" title="Toggle enhanced mode">
+                        <label class="sticky-control-label" for="stickyEnhancedAlgorithmsToggle">Enhanced Mode:</label>
+                        <button class="sticky-enhanced-toggle" id="stickyEnhancedAlgorithmsToggle" aria-label="Toggle enhanced mode" title="Toggle enhanced mode" aria-describedby="sticky-enhanced-label">
                             <div class="sticky-toggle-thumb"></div>
                         </button>
+                        <span id="sticky-enhanced-label" class="sr-only">Enhanced Mode</span>
                     </div>
                     
                     <div class="sticky-control-group">
-                        <label class="sticky-control-label">Hide Details:</label>
-                        <button class="sticky-view-toggle" id="stickyViewModeToggle" aria-label="Toggle minimal view" title="Toggle minimal view">
+                        <label class="sticky-control-label" for="stickyViewModeToggle">Hide Details:</label>
+                        <button class="sticky-view-toggle" id="stickyViewModeToggle" aria-label="Toggle minimal view" title="Toggle minimal view" aria-describedby="sticky-view-label">
                             <div class="sticky-toggle-thumb"></div>
                         </button>
+                        <span id="sticky-view-label" class="sr-only">Hide Details</span>
                     </div>
                 </div>
                 
@@ -172,14 +174,14 @@
                 <div class="header-right-actions">
                     <!-- Theme Toggle -->
                     <div class="header-theme-toggle">
-                        <button class="toggle-track" id="themeToggle" aria-label="Toggle dark mode">
+                        <button class="toggle-track" id="themeToggle" aria-label="Toggle dark mode" aria-describedby="theme-toggle-label">
                             <div class="toggle-thumb">
                                 <svg class="theme-icon" viewBox="0 0 24 24" fill="none">
                                     <path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0 .39-.39.39-1.03 0-1.41l-1.06-1.06zm1.06-10.96c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z" fill="currentColor"/>
                                 </svg>
                             </div>
                         </button>
-                        <span class="toggle-label">Dark Mode</span>
+                        <span class="toggle-label" id="theme-toggle-label">Dark Mode</span>
                     </div>
                     
                     <!-- Preview Button -->
@@ -297,18 +299,18 @@
                     <div class="toggles-row">
                         <!-- Enhanced Mode Toggle -->
                         <div class="enhanced-algorithms-toggle">
-                            <button class="toggle-track" id="enhancedAlgorithmsToggle" aria-label="Toggle enhanced mode">
+                            <button class="toggle-track" id="enhancedAlgorithmsToggle" aria-label="Toggle enhanced mode" aria-describedby="enhanced-mode-label">
                                 <div class="toggle-thumb"></div>
                             </button>
-                            <span class="toggle-label">Enhanced Mode</span>
+                            <span class="toggle-label" id="enhanced-mode-label">Enhanced Mode</span>
                         </div>
                         
                         <!-- View Mode Toggle -->
                         <div class="view-mode-toggle">
-                            <button class="toggle-track" id="viewModeToggle" aria-label="Toggle minimal view">
+                            <button class="toggle-track" id="viewModeToggle" aria-label="Toggle minimal view" aria-describedby="view-mode-label">
                                 <div class="toggle-thumb"></div>
                             </button>
-                            <span class="toggle-label">Hide Details</span>
+                            <span class="toggle-label" id="view-mode-label">Hide Details</span>
                         </div>
                     </div>
                 </div>
@@ -389,7 +391,7 @@
                     <!-- Original Scale Column -->
                     <div class="palette-column" id="originalColumn">
                         <div class="column-header">
-                            <h3 class="column-title" id="originalColumnTitle">Splish Splash Color Scale</h3>
+                            <h2 class="column-title" id="originalColumnTitle">Splish Splash Color Scale</h2>
                             <div class="accessibility-indicator not-accessible" id="originalAccessibilityIndicator">
                                 Not Accessible
                             </div>
@@ -405,7 +407,7 @@
                     <!-- Accessible Light Mode Column -->
                     <div class="palette-column hidden" id="accessibleLightColumn">
                         <div class="column-header">
-                            <h3 class="column-title" id="accessibleLightTitle">Light Mode</h3>
+                            <h2 class="column-title" id="accessibleLightTitle">Light Mode</h2>
                             <div class="accessibility-indicator accessible">
                                 Accessible
                             </div>
@@ -421,7 +423,7 @@
                     <!-- Accessible Dark Mode Column -->
                     <div class="palette-column hidden" id="accessibleDarkColumn">
                         <div class="column-header">
-                            <h3 class="column-title" id="accessibleDarkTitle">Dark Mode</h3>
+                            <h2 class="column-title" id="accessibleDarkTitle">Dark Mode</h2>
                             <div class="accessibility-indicator accessible">
                                 Accessible
                             </div>
@@ -446,7 +448,7 @@
                 <div class="preview-grid">
                     <!-- Buttons Preview -->
                     <div class="preview-section">
-                        <h4 class="section-title">Buttons & Actions</h4>
+                        <h3 class="section-title">Buttons & Actions</h3>
                         <div class="component-group">
                             <button class="btn-primary preview-btn">Primary Button</button>
                             <button class="btn-secondary preview-btn">Secondary</button>
@@ -457,7 +459,7 @@
                     
                     <!-- Forms Preview -->
                     <div class="preview-section">
-                        <h4 class="section-title">Forms & Inputs</h4>
+                        <h3 class="section-title">Forms & Inputs</h3>
                         <div class="component-group">
                             <input type="text" class="form-input preview-input" placeholder="Normal input" />
                             <input type="text" class="form-input preview-input focused" placeholder="Focused state" />
@@ -472,10 +474,10 @@
                     
                     <!-- Cards Preview -->
                     <div class="preview-section">
-                        <h4 class="section-title">Cards & Containers</h4>
+                        <h3 class="section-title">Cards & Containers</h3>
                         <div class="component-group">
                             <div class="preview-card">
-                                <h5 class="card-title">Card Title</h5>
+                                <h4 class="card-title">Card Title</h4>
                                 <p class="card-text">This is a sample card with your color scheme applied.</p>
                                 <button class="card-action preview-btn">Action</button>
                             </div>
@@ -484,7 +486,7 @@
                     
                     <!-- Alerts Preview -->
                     <div class="preview-section">
-                        <h4 class="section-title">Alerts & Messages</h4>
+                        <h3 class="section-title">Alerts & Messages</h3>
                         <div class="component-group">
                             <div class="alert alert-success preview-alert" role="alert">
                                 <strong>Success!</strong> Your action was completed successfully.
@@ -500,7 +502,7 @@
                     
                     <!-- Typography Preview -->
                     <div class="preview-section">
-                        <h4 class="section-title">Typography & Text</h4>
+                        <h3 class="section-title">Typography & Text</h3>
                         <div class="component-group">
                             <h1 class="preview-heading-1">Main Heading (H1)</h1>
                             <h2 class="preview-heading-2">Section Heading (H2)</h2>
@@ -515,7 +517,7 @@
                     
                     <!-- Navigation Preview -->
                     <div class="preview-section">
-                        <h4 class="section-title">Navigation</h4>
+                        <h3 class="section-title">Navigation</h3>
                         <div class="component-group">
                             <nav class="preview-nav">
                                 <a href="#" class="nav-link active">Home</a>
@@ -702,7 +704,7 @@
                 </a> 
             </p>
             <a href="https://www.buymeacoffee.com/shaharb" target="_blank" rel="noopener" class="buy-coffee-btn" aria-label="Buy me a coffee">
-                <img src="./assets/bmc-logo.svg" alt="Buy me a coffee" width="20" height="20">
+                <img src="./assets/bmc-logo.svg" alt="" width="20" height="20">
                 <span>Buy me a coffee</span>
             </a>
         </div>
@@ -717,7 +719,7 @@
     
     <!-- Floating Buy Me Coffee Button -->
     <a href="https://www.buymeacoffee.com/shaharb" target="_blank" rel="noopener" class="floating-coffee-btn" id="floatingCoffeeBtn" aria-label="Buy me a coffee" title="Support this project - Buy me a coffee">
-        <img src="./assets/bmc-logo.svg" alt="Buy me a coffee" width="20" height="20">
+        <img src="./assets/bmc-logo.svg" alt="" width="20" height="20">
     </a>
 
     <!-- Toast Notifications -->
@@ -737,14 +739,14 @@
                 </div>
                 <div class="lightbox-header-right">
                     <div class="lightbox-dark-mode-toggle">
-                        <button class="toggle-track" id="lightboxDarkModeToggle" aria-label="Toggle dark mode">
+                        <button class="toggle-track" id="lightboxDarkModeToggle" aria-label="Toggle dark mode" aria-describedby="lightbox-theme-label">
                             <div class="toggle-thumb">
                                 <svg class="theme-icon" viewBox="0 0 24 24" fill="none">
                                     <path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0 .39-.39.39-1.03 0-1.41l-1.06-1.06zm1.06-10.96c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z" fill="currentColor"/>
                                 </svg>
                             </div>
                         </button>
-                        <span class="toggle-label">Dark Mode</span>
+                        <span class="toggle-label" id="lightbox-theme-label">Dark Mode</span>
                     </div>
                     <button class="lightbox-close" id="lightboxClose" aria-label="Close preview">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

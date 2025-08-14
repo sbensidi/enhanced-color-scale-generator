@@ -112,8 +112,8 @@ textarea:focus-visible {
 .minimal-accessibility-full,
 .minimal-score-circle,
 .minimal-tests {
-    color: var(--text-color);
-    background-color: rgba(0, 0, 0, 0.8);
+    color: #ffffff;
+    background-color: rgba(0, 0, 0, 0.85);
     padding: 2px 6px;
     border-radius: 3px;
     font-weight: 500;
@@ -124,8 +124,79 @@ textarea:focus-visible {
 .dark-theme .minimal-accessibility-full,
 .dark-theme .minimal-score-circle,
 .dark-theme .minimal-tests {
-    background-color: rgba(255, 255, 255, 0.9);
-    color: #1f2937;
+    background-color: rgba(255, 255, 255, 0.95);
+    color: #000000;
+}
+
+/* Ensure proper contrast for all text elements */
+.app-subtitle,
+.learn-more-link,
+.config-label,
+.toggle-label,
+.sticky-control-label {
+    color: #1a1a1a;
+    font-weight: 500;
+}
+
+.dark-theme .app-subtitle,
+.dark-theme .learn-more-link,
+.dark-theme .config-label,
+.dark-theme .toggle-label,
+.dark-theme .sticky-control-label {
+    color: #f5f5f5;
+}
+
+/* Better contrast for muted text */
+.preview-muted,
+.footer-text {
+    color: #4a5568;
+    font-weight: 400;
+}
+
+.dark-theme .preview-muted,
+.dark-theme .footer-text {
+    color: #a0aec0;
+}
+
+/* Enhanced contrast for links */
+a:not(.btn):not(.button):not(.buy-coffee-btn):not(.floating-coffee-btn):not(.learn-more-link) {
+    color: #2563eb;
+    font-weight: 500;
+}
+
+.dark-theme a:not(.btn):not(.button):not(.buy-coffee-btn):not(.floating-coffee-btn):not(.learn-more-link) {
+    color: #60a5fa;
+}
+
+/* Improve button contrast */
+.export-btn,
+.sticky-preview-btn,
+.btn-primary {
+    background-color: #2563eb;
+    color: #ffffff;
+    border: 2px solid #2563eb;
+}
+
+.export-btn:hover,
+.sticky-preview-btn:hover,
+.btn-primary:hover {
+    background-color: #1d4ed8;
+    border-color: #1d4ed8;
+}
+
+/* High contrast error messages */
+.error-message {
+    color: #dc2626;
+    background-color: #fef2f2;
+    border: 1px solid #fecaca;
+    padding: 8px 12px;
+    border-radius: 4px;
+}
+
+.dark-theme .error-message {
+    color: #f87171;
+    background-color: #1f1717;
+    border-color: #991b1b;
 }
 
 /* Ensure proper heading hierarchy */
@@ -264,4 +335,85 @@ th {
 
 [aria-hidden="true"] {
     display: none !important;
+}
+
+/* Additional contrast improvements */
+.sticky-control-label,
+.export-label,
+.control-label {
+    color: #374151;
+    font-weight: 600;
+}
+
+.dark-theme .sticky-control-label,
+.dark-theme .export-label,
+.dark-theme .control-label {
+    color: #e5e7eb;
+}
+
+/* Improve select dropdown contrast */
+.sticky-scale-select,
+.export-select,
+.algorithm-select {
+    background-color: #ffffff;
+    border: 2px solid #d1d5db;
+    color: #374151;
+}
+
+.dark-theme .sticky-scale-select,
+.dark-theme .export-select,
+.dark-theme .algorithm-select {
+    background-color: #1f2937;
+    border-color: #4b5563;
+    color: #f9fafb;
+}
+
+/* Enhanced focus indicators */
+.sticky-scale-select:focus,
+.export-select:focus,
+.algorithm-select:focus,
+.color-picker:focus,
+.color-picker-text:focus {
+    outline: 3px solid #2563eb;
+    outline-offset: 2px;
+    border-color: #2563eb;
+}
+
+/* Improve toast notifications contrast */
+.toast-container .toast {
+    background-color: #1f2937;
+    color: #ffffff;
+    border: 1px solid #374151;
+}
+
+.toast-container .toast.success {
+    background-color: #065f46;
+    border-color: #047857;
+}
+
+.toast-container .toast.error {
+    background-color: #991b1b;
+    border-color: #dc2626;
+}
+
+/* Ensure proper text contrast in all states */
+.segment-label {
+    color: #374151;
+    font-weight: 500;
+}
+
+.segment-label.active,
+.segment-input:checked + .segment-label {
+    color: #ffffff;
+    background-color: #2563eb;
+}
+
+.dark-theme .segment-label {
+    color: #e5e7eb;
+}
+
+.dark-theme .segment-label.active,
+.dark-theme .segment-input:checked + .segment-label {
+    color: #ffffff;
+    background-color: #3b82f6;
 }
