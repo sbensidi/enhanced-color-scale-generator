@@ -313,12 +313,216 @@ function mixHSLColors(hsl1, hsl2, ratio) {
 }
 
 /**
+ * Convert RGB to LAB color space
+ * @param {Array} rgb - RGB array [r, g, b]
+ * @returns {Array} LAB array [L, a, b]
+ */
+function rgbToLab(rgb) {
+    // Convert RGB to XYZ first
+    let [r, g, b] = rgb.map(val => {
+        val = val / 255;
+        if (val > 0.04045) {
+            val = Math.pow(((val + 0.055) / 1.055), 2.4);
+        } else {
+            val = val / 12.92;
+        }
+        return val * 100;
+    });
+    
+    // Observer = 2°, Illuminant = D65
+    let x = r * 0.4124 + g * 0.3576 + b * 0.1805;
+    let y = r * 0.2126 + g * 0.7152 + b * 0.0722;
+    let z = r * 0.0193 + g * 0.1192 + b * 0.9505;
+    
+    // Normalize for D65 illuminant
+    x = x / 95.047;
+    y = y / 100.000;
+    z = z / 108.883;
+    
+    // Convert XYZ to LAB
+    [x, y, z] = [x, y, z].map(val => {
+        if (val > 0.008856) {
+            val = Math.pow(val, 1/3);
+        } else {
+            val = (7.787 * val) + (16/116);
+        }
+        return val;
+    });
+    
+    const L = (116 * y) - 16;
+    const a = 500 * (x - y);
+    const b_val = 200 * (y - z);
+    
+    return [L, a, b_val];
+}
+
+/**
+ * Convert LAB to RGB color space
+ * @param {Array} lab - LAB array [L, a, b]
+ * @returns {Array} RGB array [r, g, b]
+ */
+function labToRgb(lab) {
+    const [L, a, b] = lab;
+    
+    let y = (L + 16) / 116;
+    let x = a / 500 + y;
+    let z = y - b / 200;
+    
+    // Convert to XYZ
+    [x, y, z] = [x, y, z].map(val => {
+        const cubed = Math.pow(val, 3);
+        if (cubed > 0.008856) {
+            val = cubed;
+        } else {
+            val = (val - 16/116) / 7.787;
+        }
+        return val;
+    });
+    
+    // Scale by illuminant
+    x = x * 95.047;
+    y = y * 100.000;
+    z = z * 108.883;
+    
+    // Convert XYZ to RGB
+    x = x / 100;
+    y = y / 100;
+    z = z / 100;
+    
+    let r = x * 3.2406 + y * -1.5372 + z * -0.4986;
+    let g = x * -0.9689 + y * 1.8758 + z * 0.0415;
+    let b_val = x * 0.0557 + y * -0.2040 + z * 1.0570;
+    
+    // Convert to sRGB
+    [r, g, b_val] = [r, g, b_val].map(val => {
+        if (val > 0.0031308) {
+            val = 1.055 * Math.pow(val, 1/2.4) - 0.055;
+        } else {
+            val = 12.92 * val;
+        }
+        return Math.max(0, Math.min(1, val)) * 255;
+    });
+    
+    return [Math.round(r), Math.round(g), Math.round(b_val)];
+}
+
+/**
+ * Convert RGB to LCH color space
+ * @param {Array} rgb - RGB array [r, g, b]
+ * @returns {Array} LCH array [L, C, H]
+ */
+function rgbToLch(rgb) {
+    const lab = rgbToLab(rgb);
+    const [L, a, b] = lab;
+    
+    const C = Math.sqrt(a * a + b * b);
+    let H = Math.atan2(b, a) * 180 / Math.PI;
+    if (H < 0) H += 360;
+    
+    return [L, C, H];
+}
+
+/**
+ * Convert LCH to RGB color space
+ * @param {Array} lch - LCH array [L, C, H]
+ * @returns {Array} RGB array [r, g, b]
+ */
+function lchToRgb(lch) {
+    const [L, C, H] = lch;
+    
+    const h_rad = H * Math.PI / 180;
+    const a = Math.cos(h_rad) * C;
+    const b = Math.sin(h_rad) * C;
+    
+    return labToRgb([L, a, b]);
+}
+
+/**
+ * Calculate Delta E (CIE2000) for perceptual color difference
+ * @param {Array} lab1 - First LAB color [L, a, b]
+ * @param {Array} lab2 - Second LAB color [L, a, b]
+ * @returns {number} Delta E value (lower = more similar)
+ */
+function calculateDeltaE(lab1, lab2) {
+    const [L1, a1, b1] = lab1;
+    const [L2, a2, b2] = lab2;
+    
+    // Calculate chroma
+    const C1 = Math.sqrt(a1 * a1 + b1 * b1);
+    const C2 = Math.sqrt(a2 * a2 + b2 * b2);
+    const meanC = (C1 + C2) / 2;
+    
+    // Calculate G adjustment factor
+    const G = 0.5 * (1 - Math.sqrt(Math.pow(meanC, 7) / (Math.pow(meanC, 7) + Math.pow(25, 7))));
+    
+    // Apply adjustments
+    const a1p = a1 * (1 + G);
+    const a2p = a2 * (1 + G);
+    
+    const C1p = Math.sqrt(a1p * a1p + b1 * b1);
+    const C2p = Math.sqrt(a2p * a2p + b2 * b2);
+    
+    // Calculate hue angles
+    let h1p = Math.atan2(b1, a1p) * 180 / Math.PI;
+    let h2p = Math.atan2(b2, a2p) * 180 / Math.PI;
+    if (h1p < 0) h1p += 360;
+    if (h2p < 0) h2p += 360;
+    
+    // Calculate deltas
+    const deltaLp = L2 - L1;
+    const deltaCp = C2p - C1p;
+    
+    let deltahp = h2p - h1p;
+    if (Math.abs(deltahp) > 180) {
+        if (h2p > h1p) {
+            deltahp -= 360;
+        } else {
+            deltahp += 360;
+        }
+    }
+    
+    const deltaHp = 2 * Math.sqrt(C1p * C2p) * Math.sin(deltahp * Math.PI / 360);
+    
+    // Calculate weighting functions
+    const meanLp = (L1 + L2) / 2;
+    const meanCp = (C1p + C2p) / 2;
+    let meanHp = (h1p + h2p) / 2;
+    
+    if (Math.abs(h1p - h2p) > 180) {
+        meanHp += 180;
+        if (meanHp >= 360) meanHp -= 360;
+    }
+    
+    const T = 1 - 0.17 * Math.cos((meanHp - 30) * Math.PI / 180) +
+              0.24 * Math.cos(2 * meanHp * Math.PI / 180) +
+              0.32 * Math.cos((3 * meanHp + 6) * Math.PI / 180) -
+              0.20 * Math.cos((4 * meanHp - 63) * Math.PI / 180);
+    
+    const SL = 1 + (0.015 * Math.pow(meanLp - 50, 2)) / Math.sqrt(20 + Math.pow(meanLp - 50, 2));
+    const SC = 1 + 0.045 * meanCp;
+    const SH = 1 + 0.015 * meanCp * T;
+    
+    const RT = -2 * Math.sqrt(Math.pow(meanCp, 7) / (Math.pow(meanCp, 7) + Math.pow(25, 7))) *
+               Math.sin(60 * Math.exp(-Math.pow((meanHp - 275) / 25, 2)) * Math.PI / 180);
+    
+    // Final Delta E calculation
+    const deltaE = Math.sqrt(
+        Math.pow(deltaLp / SL, 2) +
+        Math.pow(deltaCp / SC, 2) +
+        Math.pow(deltaHp / SH, 2) +
+        RT * (deltaCp / SC) * (deltaHp / SH)
+    );
+    
+    return deltaE;
+}
+
+/**
  * Check if a color is considered neutral (low saturation)
  * @param {Array} hsl - HSL array [h, s, l]
  * @returns {boolean} True if color is neutral
  */
 function isNeutralColor(hsl) {
-    return hsl[1] < 10; // Saturation less than 10%
+    return hsl[1] < 15; // Updated threshold from 10% to 15%
 }
 
 /**
@@ -332,5 +536,19 @@ function clampHSL(hsl) {
         ((h % 360) + 360) % 360, // Ensure hue is 0-359
         Math.max(0, Math.min(100, s)), // Clamp saturation 0-100
         Math.max(0, Math.min(100, l))  // Clamp lightness 0-100
+    ];
+}
+
+/**
+ * Clamp LCH values to valid ranges
+ * @param {Array} lch - LCH array [L, C, H]
+ * @returns {Array} Clamped LCH array [L, C, H]
+ */
+function clampLCH(lch) {
+    const [L, C, H] = lch;
+    return [
+        Math.max(0, Math.min(100, L)), // Clamp lightness 0-100
+        Math.max(0, C), // Chroma can't be negative
+        ((H % 360) + 360) % 360  // Ensure hue is 0-359
     ];
 }

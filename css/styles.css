@@ -101,8 +101,8 @@
 /* Floating Back to Top Button */
 .back-to-top-btn {
     position: fixed;
-    bottom: 7rem;
-    right: 2rem;
+    bottom: 2rem;
+    right: 1rem;
     width: 50px;
     height: 50px;
     background: var(--primary-color);
@@ -139,6 +139,21 @@
     stroke-width: 2.5;
 }
 
+/* Medium screen adjustments */
+@media (max-width: 1024px) and (min-width: 769px) {
+    .combined-controls-row {
+        gap: 1rem;
+    }
+    
+    .combined-controls-row .scale-config {
+        min-width: 260px;
+    }
+    
+    .combined-controls-row .accessibility-mode-config {
+        min-width: 200px;
+    }
+}
+
 /* Responsive Design for How It Works */
 @media (max-width: 768px) {
     .how-it-works-section {
@@ -165,7 +180,7 @@
     }
     
     .back-to-top-btn {
-        bottom: 6rem;
+        bottom: 1rem;
         right: 1rem;
         width: 44px;
         height: 44px;
@@ -530,10 +545,10 @@ body {
 /* Modern Theme Toggle */
 .toggle-track {
     position: relative;
-    width: 44px;
-    height: 24px;
+    width: 32px;
+    height: 18px;
     background: #e5e7eb;
-    border-radius: 12px;
+    border-radius: 9px;
     border: 1px solid #d1d5db;
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -557,7 +572,7 @@ body {
 }
 
 .dark-theme #themeToggle.toggle-track:hover .toggle-thumb {
-    transform: translateX(20px) scale(1.05);
+    transform: translateX(14px) scale(1.05);
 }
 
 .toggle-label {
@@ -572,16 +587,16 @@ body {
     position: absolute;
     top: 1px;
     left: 1px;
-    width: 20px;
-    height: 20px;
+    width: 14px;
+    height: 14px;
     background: white;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.1);
-    border: 1px solid #e5e7eb;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    border: 1px solid #d1d5db;
 }
 
 .theme-icon {
@@ -603,14 +618,28 @@ body {
 }
 
 .dark-theme #themeToggle .toggle-thumb {
-    transform: translateX(20px);
-    background: white;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.2);
+    transform: translateX(14px);
+    background: white !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.dark-theme #themeToggle .theme-icon {
+    color: var(--primary-color) !important;
 }
 
 .dark-theme .theme-icon {
     transform: rotate(0deg);
+    color: var(--primary-color);
+}
+
+/* Light mode theme toggle styling - white thumb with blue sun */
+#themeToggle .toggle-thumb {
+    background: white;
+    border: 1px solid var(--border-color);
+}
+
+#themeToggle .theme-icon {
     color: var(--primary-color);
 }
 
@@ -657,10 +686,20 @@ body {
 /* Combined Controls Row */
 .combined-controls-row {
     display: flex;
+    gap: 1.5rem;
+    align-items: flex-end;
+    flex-wrap: nowrap;
+    min-height: 44px; /* Match segmented control height */
+    margin-bottom: 1rem;
+}
+
+/* Toggles Row */
+.toggles-row {
+    display: flex;
     gap: 2rem;
     align-items: center;
-    flex-wrap: wrap;
-    min-height: 44px; /* Match segmented control height */
+    padding: 0 1rem;
+    min-width:fit-content;
 }
 
 .combined-controls-row .color-picker-container {
@@ -668,6 +707,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+    flex-shrink: 0;
 }
 
 .combined-controls-row .color-picker-group {
@@ -675,10 +715,11 @@ body {
 }
 
 .combined-controls-row .scale-config {
-    min-width: 300px;
+    min-width: 280px;
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+    flex-shrink: 0;
 }
 
 .combined-controls-row .scale-config .scale-controls-row {
@@ -818,6 +859,8 @@ body {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+    flex-shrink: 0;
+    min-width: 240px;
 }
 
 .accessibility-controls-row {
@@ -841,18 +884,7 @@ body {
 }
 
 /* View Mode Toggle Styles */
-#viewModeToggle {
-    position: relative;
-    width: 44px;
-    height: 24px;
-    background: #e5e7eb;
-    border-radius: 12px;
-    border: 1px solid #d1d5db;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    outline: none;
-    padding: 0;
-}
+/* #viewModeToggle inherits from .toggle-track - no custom sizing needed */
 
 #viewModeToggle:hover {
     background: #d1d5db;
@@ -864,18 +896,7 @@ body {
     box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb), 0.2);
 }
 
-#viewModeToggle .toggle-thumb {
-    position: absolute;
-    top: 1px;
-    left: 1px;
-    width: 20px;
-    height: 20px;
-    background: white;
-    border-radius: 50%;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    border: 1px solid #d1d5db;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
+/* #viewModeToggle .toggle-thumb inherits from .toggle-thumb - no custom sizing needed */
 
 /* Active state (minimal view) */
 body.minimal-view #viewModeToggle {
@@ -889,10 +910,10 @@ body.minimal-view #viewModeToggle:hover {
 }
 
 body.minimal-view #viewModeToggle .toggle-thumb {
-    transform: translateX(20px);
+    transform: translateX(14px);
     background: white;
     border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 body.minimal-view .view-mode-icon {
@@ -944,6 +965,43 @@ body.minimal-view .sticky-view-toggle {
 }
 
 body.minimal-view .sticky-toggle-thumb {
+    transform: translateX(14px);
+    background: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+/* Sticky Enhanced Mode Toggle */
+.sticky-enhanced-toggle {
+    position: relative;
+    width: 32px;
+    height: 18px;
+    background: #e5e7eb;
+    border: 1px solid #d1d5db;
+    border-radius: 9px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    outline: none;
+    padding: 0;
+}
+
+.sticky-enhanced-toggle:hover {
+    background: #d1d5db;
+    box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb), 0.1);
+}
+
+.sticky-enhanced-toggle:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb), 0.1);
+}
+
+/* Active state for sticky enhanced toggle */
+body.enhanced-algorithms-active .sticky-enhanced-toggle {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+body.enhanced-algorithms-active .sticky-enhanced-toggle .sticky-toggle-thumb {
     transform: translateX(14px);
     background: white;
     border: 1px solid rgba(255, 255, 255, 0.2);
@@ -1079,31 +1137,68 @@ body.minimal-view .sticky-toggle-thumb {
 
 /* Lightbox theme toggle styling - same as main toggle */
 .lightbox-dark-mode-toggle .toggle-track {
-    width: 44px;
-    height: 24px;
+    width: 32px;
+    height: 18px;
 }
 
 .lightbox-dark-mode-toggle .toggle-thumb {
-    width: 20px;
-    height: 20px;
+    width: 14px;
+    height: 14px;
 }
 
 .lightbox-dark-mode-toggle .theme-icon {
-    width: 16px;
-    height: 16px;
+    width: 0.75rem;
+    height: 0.75rem;
+    color: #6b7280;
+    transition: color 0.2s ease;
 }
 
-/* Lightbox dark mode toggle states */
+/* Lightbox theme icon in active state - same as main toggle */
+.lightbox-dark-mode-active .lightbox-dark-mode-toggle .theme-icon {
+    color: var(--primary-color) !important;
+}
+
+/* Lightbox dark mode toggle states - exactly like main toggle */
+.preview-lightbox .lightbox-content.lightbox-dark-mode-active .lightbox-dark-mode-toggle .toggle-track,
 .lightbox-dark-mode-active .lightbox-dark-mode-toggle .toggle-track {
-    background: var(--primary-color);
-    border-color: var(--primary-color);
+    background: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
 }
 
+.preview-lightbox .lightbox-content.lightbox-dark-mode-active .lightbox-dark-mode-toggle .toggle-thumb,
 .lightbox-dark-mode-active .lightbox-dark-mode-toggle .toggle-thumb {
-    transform: translateX(20px);
-    background: white;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    transform: translateX(14px) !important;
+    background: white !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
 }
+
+/* Lightbox toggle hover states - same as main toggle */
+.lightbox-dark-mode-toggle .toggle-track:hover {
+    background: #d1d5db;
+    box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb), 0.1);
+}
+
+.lightbox-dark-mode-toggle .toggle-track:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb), 0.2);
+}
+
+.lightbox-dark-mode-toggle .toggle-track:hover .toggle-thumb {
+    transform: scale(1.05);
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.2), 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+.lightbox-dark-mode-active .lightbox-dark-mode-toggle .toggle-track:hover .toggle-thumb {
+    transform: translateX(14px) scale(1.05);
+}
+
+.preview-lightbox .lightbox-content.lightbox-dark-mode-active .lightbox-dark-mode-toggle .toggle-track:hover {
+    background: var(--primary-color-hover) !important;
+    box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb), 0.2) !important;
+}
+
+/* Override the old lightbox theme toggle light mode styling */
 
 .lightbox-title {
     font-size: 1.25rem;
@@ -1166,19 +1261,45 @@ body.minimal-view .sticky-toggle-thumb {
 }
 
 .minimal-level-indicator {
-    font-size: 0.875rem;
+    font-size: 0.75rem;
     font-weight: 600;
     background: rgba(255, 255, 255, 0.2);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     padding: 0.25rem 0.5rem;
     border-radius: 6px;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    pointer-events: none;
 }
 
 .color-card-minimal:hover .minimal-level-indicator {
+    opacity: 1;
+}
+
+/* Copy icon for minimal cards */
+.minimal-copy-icon {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    width: 24px;
+    height: 24px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    pointer-events: none;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+}
+
+.minimal-copy-icon .value-copy-icon {
+    width: 16px;
+    height: 16px;
+}
+
+.color-card-minimal:hover .minimal-copy-icon {
     opacity: 1;
 }
 
@@ -1400,6 +1521,105 @@ body.minimal-view .sticky-toggle-thumb {
 /* Dark theme adjustments for minimal cards */
 .dark-theme .minimal-level-indicator {
     background: rgba(0, 0, 0, 0.3);
+}
+
+/* Minimal Bottom Info Row */
+.minimal-bottom-info {
+    position: absolute;
+    bottom: 6px;
+    left: 6px;
+    right: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.color-card-minimal:hover .minimal-bottom-info {
+    opacity: 1;
+}
+
+.minimal-hex-value {
+    font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+    font-size: 0.75rem;
+    font-weight: 600;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+}
+
+.minimal-accessibility-full {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+}
+
+.minimal-access-group {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+}
+
+.minimal-score-circle {
+    min-width: 18px;
+    height: 14px;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0 3px;
+    gap: 4px;
+}
+
+.minimal-score-circle.black-circle {
+    background: #000000;
+    color: #ffffff;
+}
+
+.minimal-score-circle.white-circle {
+    background: #ffffff;
+    color: #000000;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.minimal-tests {
+    display: flex;
+    flex-direction: row;
+    gap: 2px;
+    position: relative;
+    top: 1px;
+}
+
+.minimal-test {
+    font-size: 0.75rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.minimal-score-number {
+    line-height: 0;
+}
+
+.minimal-test.pass {
+    color: #22c55e;
+}
+
+.minimal-test.fail {
+    color: #ef4444;
 }
 
 /* Hide full details in minimal view */
@@ -2735,6 +2955,30 @@ body.minimal-view .color-card-minimal {
     color: #e2e8f0 !important;
 }
 
+/* Lightbox theme toggle styling - light mode: white thumb with blue sun */
+.lightbox-dark-mode-toggle .toggle-thumb {
+    background: white;
+    border: 1px solid var(--border-color);
+}
+
+.lightbox-dark-mode-toggle .theme-icon {
+    color: var(--primary-color);
+    transform: rotate(180deg);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Lightbox theme toggle styling - dark mode: blue thumb with white moon */
+.lightbox-content.lightbox-dark-mode-active .lightbox-dark-mode-toggle .toggle-thumb {
+    background: var(--primary-color) !important;
+    border: 1px solid var(--primary-color) !important;
+    transform: translateX(14px);
+}
+
+.lightbox-content.lightbox-dark-mode-active .lightbox-dark-mode-toggle .theme-icon {
+    color: white !important;
+    transform: rotate(0deg);
+}
+
 /* Light mode lightbox header (normal state) */
 .lightbox-header {
     background: var(--card-bg);
@@ -2797,28 +3041,10 @@ body.minimal-view .color-card-minimal {
     border-color: #334155;
 }
 
-/* Dark mode toggle styling in lightbox */
-.lightbox-content.lightbox-dark-mode-active .toggle-track {
-    background: #374151;
-    border-color: #4b5563;
-}
+/* Remove redundant dark mode toggle styling - using main toggle styles */
 
-.lightbox-content.lightbox-dark-mode-active .toggle-track.active {
-    background: var(--primary-color, #3b82f6);
-    border-color: var(--primary-color, #3b82f6);
-}
-
-.lightbox-content.lightbox-dark-mode-active .toggle-thumb {
-    background: #1f2937;
-}
-
-.lightbox-content.lightbox-dark-mode-active .toggle-track.active .toggle-thumb {
-    background: #ffffff;
-    transform: translateX(28px);
-}
-
-.lightbox-content.lightbox-dark-mode-active .theme-icon {
-    color: #e2e8f0;
+.lightbox-content.lightbox-dark-mode-active .lightbox-dark-mode-toggle .theme-icon {
+    color: var(--primary-color) !important;
 }
 
 /* Header right actions container */
@@ -3089,8 +3315,8 @@ body.minimal-view .color-card-minimal {
 /* Floating Buy Me Coffee Button */
 .floating-coffee-btn {
     position: fixed;
-    bottom: 160px;
-    right: 32px;
+    bottom: 7rem;
+    right: 1rem;
     width: 50px;
     height: 50px;
     background: #FFDD00;
@@ -3100,7 +3326,7 @@ body.minimal-view .color-card-minimal {
     justify-content: center;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     transition: all 0.3s ease;
-    z-index: 998;
+    z-index: 997;
     text-decoration: none;
     opacity: 0;
     visibility: hidden;
@@ -3127,8 +3353,8 @@ body.minimal-view .color-card-minimal {
 
 @media (max-width: 768px) {
     .floating-coffee-btn {
-        bottom: 110px; /* 16px + 44px (back-to-top height) + 50px spacing */
-        right: 16px;
+        bottom: 4.5rem; /* Above the back-to-top button */
+        right: 1rem;
         width: 44px;
         height: 44px;
     }
@@ -3191,6 +3417,14 @@ body.minimal-view .color-card-minimal {
 /* Utility Classes */
 .hidden {
     display: none !important;
+}
+
+/* Override for animated elements */
+.enhanced-algorithm-controls.hidden {
+    display: block !important;
+    max-height: 0 !important;
+    opacity: 0 !important;
+    padding: 0 1.5rem !important;
 }
 
 .sr-only {

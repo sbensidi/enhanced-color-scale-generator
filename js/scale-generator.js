@@ -6,32 +6,303 @@
 
 // Scale configuration presets
 const SCALE_CONFIGURATIONS = {
-    'minimal': {
-        name: 'Minimal (1 level)',
-        levels: [400],
-        description: 'Just the base color level 400'
-    },
-    'simple': {
-        name: 'Simple (3 levels)', 
+    'triad': {
+        name: 'Triad (3 levels)', 
         levels: [300, 400, 600],
         description: 'Light, base, and dark'
     },
-    'standard': {
-        name: 'Standard (5 levels)',
+    'pentatonic': {
+        name: 'Pentatonic (5 levels)',
         levels: [200, 300, 400, 500, 600],
         description: 'Well-balanced range for most projects'
     },
-    'current': {
-        name: 'Current (7 levels)',
+    'diatonic': {
+        name: 'Diatonic (7 levels)',
         levels: [100, 200, 300, 400, 500, 600, 700],
-        description: 'Current default range'
+        description: 'Complete musical scale range'
     },
-    'extended': {
-        name: 'Extended (9 levels)',
+    'chromatic': {
+        name: 'Chromatic (9 levels)',
         levels: [50, 100, 200, 300, 400, 500, 600, 700, 800],
-        description: 'Maximum range for complex design systems'
+        description: 'Full chromatic range for complex design systems'
     }
 };
+
+/**
+ * Create enhanced color scale with advanced algorithms
+ * @param {Array} baseHSL - Base HSL color [h, s, l]
+ * @param {string} configuration - Scale configuration name
+ * @param {Object} options - Enhanced options
+ * @returns {Array} Enhanced color scale array
+ */
+function createEnhancedColorScale(baseHSL, configuration = 'diatonic', options = {}) {
+    const {
+        usePerceptualUniformity = true,
+        interpolationMethod = 'lch',
+        enableBezierInterpolation = false
+    } = options;
+    
+    // First create the base scale using existing method
+    let colorScale = createColorScale(baseHSL, configuration);
+    
+    // Apply enhanced algorithms if requested
+    if (usePerceptualUniformity && interpolationMethod === 'lch') {
+        colorScale = applyLCHInterpolation(colorScale, baseHSL, configuration);
+    }
+    
+    if (enableBezierInterpolation) {
+        colorScale = applyBezierInterpolation(colorScale, baseHSL, configuration);
+    }
+    
+    // Add enhanced data to each color
+    colorScale = colorScale.map((color, index) => {
+        const enhancedColor = { ...color };
+        
+        // Add LCH values if using LCH interpolation
+        if (interpolationMethod === 'lch') {
+            enhancedColor.lch = rgbToLch(color.rgb);
+        }
+        
+        // Calculate Delta E if we have adjacent colors
+        if (index > 0 && interpolationMethod === 'lch') {
+            const prevColor = colorScale[index - 1];
+            if (prevColor.lch && enhancedColor.lch) {
+                enhancedColor.deltaE = calculateDeltaE(prevColor.lch, enhancedColor.lch);
+            }
+        }
+        
+        // Add enhanced metadata
+        enhancedColor.algorithm = 'enhanced';
+        enhancedColor.interpolationMethod = interpolationMethod;
+        enhancedColor.perceptualUniformity = usePerceptualUniformity;
+        
+        return enhancedColor;
+    });
+    
+    return colorScale;
+}
+
+/**
+ * Apply LCH-based interpolation for better perceptual uniformity
+ * @param {Array} colorScale - Original color scale
+ * @param {Array} baseHSL - Base HSL color
+ * @param {string} configuration - Scale configuration
+ * @returns {Array} LCH-enhanced color scale
+ */
+function applyLCHInterpolation(colorScale, baseHSL, configuration) {
+    const config = SCALE_CONFIGURATIONS[configuration];
+    if (!config) return colorScale;
+    
+    const baseLCH = rgbToLch(hslToRgb(baseHSL));
+    const baseLevel = getBaseLevelForConfiguration(config.levels);
+    
+    return colorScale.map(color => {
+        if (color.level === baseLevel) {
+            // Keep the base color unchanged
+            return color;
+        }
+        
+        // Calculate target lightness using LCH space
+        const lightnessFactor = (color.level - baseLevel) / 100;
+        const targetL = Math.max(0, Math.min(100, baseLCH[0] - lightnessFactor * 15));
+        
+        // Adjust chroma for better saturation at different lightness levels
+        let targetC = baseLCH[1];
+        if (targetL < 50) {
+            // Boost chroma in darker colors
+            targetC = Math.min(132, targetC * (1 + (50 - targetL) * 0.01));
+        } else if (targetL > 70) {
+            // Reduce chroma in lighter colors to avoid fluorescent appearance
+            targetC = targetC * (1 - (targetL - 70) * 0.008);
+        }
+        
+        const targetLCH = [targetL, targetC, baseLCH[2]];
+        const targetRGB = lchToRgb(targetLCH);
+        const targetHSL = rgbToHSL(targetRGB);
+        const targetHex = rgbToHex(targetRGB);
+        
+        // Get accessibility info
+        const contrastInfo = getContrastInfo(targetRGB);
+        
+        return {
+            ...color,
+            hsl: targetHSL,
+            rgb: targetRGB,
+            hex: targetHex,
+            blackPassesNormal: contrastInfo.black.passesNormal,
+            blackPassesLarge: contrastInfo.black.passesLarge,
+            blackRatio: contrastInfo.black.ratio,
+            whitePassesNormal: contrastInfo.white.passesNormal,
+            whitePassesLarge: contrastInfo.white.passesLarge,
+            whiteRatio: contrastInfo.white.ratio,
+            preferredTextColor: contrastInfo.preferredText,
+            lch: targetLCH
+        };
+    });
+}
+
+
+/**
+ * Apply Bezier curve interpolation for smoother transitions
+ * @param {Array} colorScale - Color scale to enhance
+ * @param {Array} baseHSL - Base HSL color
+ * @param {string} configuration - Scale configuration
+ * @returns {Array} Bezier-enhanced color scale
+ */
+function applyBezierInterpolation(colorScale, baseHSL, configuration) {
+    // For Bezier interpolation, we create smoother transitions between colors
+    // by using cubic Bezier curves instead of linear interpolation
+    const config = SCALE_CONFIGURATIONS[configuration];
+    if (!config || config.levels.length < 3) return colorScale;
+    
+    const baseLevel = getBaseLevelForConfiguration(config.levels);
+    const baseIndex = colorScale.findIndex(color => color.level === baseLevel);
+    
+    return colorScale.map((color, index) => {
+        if (color.level === baseLevel) return color; // Keep base unchanged
+        
+        // Calculate Bezier curve position
+        const t = (index - baseIndex) / (colorScale.length - 1 - baseIndex);
+        const bezierT = bezierEasing(Math.abs(t));
+        
+        // Apply smooth curve to saturation and lightness
+        const [h, s, l] = color.hsl;
+        const [baseH, baseS, baseL] = baseHSL;
+        
+        const smoothS = baseS + (s - baseS) * bezierT;
+        const smoothL = baseL + (l - baseL) * bezierT;
+        
+        const smoothHSL = [h, smoothS, smoothL];
+        const smoothRGB = hslToRgb(smoothHSL);
+        const smoothHex = hslToHex(smoothHSL);
+        const contrastInfo = getContrastInfo(smoothRGB);
+        
+        return {
+            ...color,
+            hsl: smoothHSL,
+            rgb: smoothRGB,
+            hex: smoothHex,
+            blackPassesNormal: contrastInfo.black.passesNormal,
+            blackPassesLarge: contrastInfo.black.passesLarge,
+            blackRatio: contrastInfo.black.ratio,
+            whitePassesNormal: contrastInfo.white.passesNormal,
+            whitePassesLarge: contrastInfo.white.passesLarge,
+            whiteRatio: contrastInfo.white.ratio,
+            preferredTextColor: contrastInfo.preferredText
+        };
+    });
+}
+
+/**
+ * Bezier easing function for smooth curves
+ * @param {number} t - Input value (0-1)
+ * @returns {number} Eased value
+ */
+function bezierEasing(t) {
+    // Using ease-in-out curve
+    return t * t * (3 - 2 * t);
+}
+
+/**
+ * Calculate quality metrics for a color scale
+ * @param {Array} colorScale - Color scale to analyze
+ * @param {Array} baseHSL - Original base HSL color
+ * @returns {Object} Quality metrics
+ */
+function calculateQualityMetrics(colorScale, baseHSL) {
+    let perceptualUniformity = 0;
+    let colorHarmony = 0;
+    let smoothness = 0;
+    
+    if (!colorScale || colorScale.length === 0) {
+        return {
+            perceptualUniformity: 0,
+            colorHarmony: 0,
+            smoothness: 0,
+            overallScore: 0,
+            algorithm: 'none'
+        };
+    }
+    
+    // Calculate perceptual uniformity (based on LCH Delta E if available)
+    if (colorScale.length > 1) {
+        let deltaESum = 0;
+        let deltaECount = 0;
+        
+        for (let i = 1; i < colorScale.length; i++) {
+            const color = colorScale[i];
+            const prevColor = colorScale[i - 1];
+            
+            if (color.lch && prevColor.lch) {
+                const deltaE = calculateDeltaE(prevColor.lch, color.lch);
+                deltaESum += Math.abs(deltaE - 10); // Target Delta E of ~10 for good steps
+                deltaECount++;
+            }
+        }
+        
+        if (deltaECount > 0) {
+            const avgDeltaDiff = deltaESum / deltaECount;
+            perceptualUniformity = Math.max(0, 1 - (avgDeltaDiff / 20)); // Normalize to 0-1
+        } else {
+            // Fallback to lightness uniformity
+            const lightnessSteps = [];
+            for (let i = 1; i < colorScale.length; i++) {
+                lightnessSteps.push(Math.abs(colorScale[i].hsl[2] - colorScale[i-1].hsl[2]));
+            }
+            const avgStep = lightnessSteps.reduce((sum, step) => sum + step, 0) / lightnessSteps.length;
+            const stepVariance = lightnessSteps.reduce((sum, step) => sum + Math.pow(step - avgStep, 2), 0) / lightnessSteps.length;
+            perceptualUniformity = Math.max(0, 1 - (stepVariance / 100));
+        }
+    }
+    
+    // Calculate color harmony (how well colors work together)
+    const baseHue = baseHSL[0];
+    let harmonySum = 0;
+    colorScale.forEach(color => {
+        const hue = color.hsl[0];
+        const hueDiff = Math.abs(hue - baseHue);
+        const normalizedHueDiff = Math.min(hueDiff, 360 - hueDiff);
+        // Reward complementary, triadic, and analogous relationships
+        const harmonyScore = 1 - Math.min(normalizedHueDiff / 180, 1);
+        harmonySum += harmonyScore;
+    });
+    colorHarmony = harmonySum / colorScale.length;
+    
+    // Calculate smoothness (gradual transitions)
+    if (colorScale.length > 2) {
+        let smoothnessSum = 0;
+        for (let i = 1; i < colorScale.length - 1; i++) {
+            const prev = colorScale[i - 1];
+            const curr = colorScale[i];
+            const next = colorScale[i + 1];
+            
+            // Check if current color is between its neighbors
+            const prevLightness = prev.hsl[2];
+            const currLightness = curr.hsl[2];
+            const nextLightness = next.hsl[2];
+            
+            const expectedLightness = (prevLightness + nextLightness) / 2;
+            const lightnessDiff = Math.abs(currLightness - expectedLightness);
+            smoothnessSum += Math.max(0, 1 - (lightnessDiff / 25));
+        }
+        smoothness = smoothnessSum / (colorScale.length - 2);
+    }
+    
+    // Calculate overall score with updated weights
+    const overallScore = (
+        perceptualUniformity * 0.4 +
+        colorHarmony * 0.35 +
+        smoothness * 0.25
+    );
+    
+    return {
+        perceptualUniformity: Math.max(0, Math.min(1, perceptualUniformity)),
+        colorHarmony: Math.max(0, Math.min(1, colorHarmony)),
+        smoothness: Math.max(0, Math.min(1, smoothness)),
+        overallScore: Math.max(0, Math.min(1, overallScore)),
+        algorithm: colorScale[0]?.algorithm || 'standard'
+    };
+}
 
 /**
  * Get the base level for a given configuration
@@ -56,7 +327,7 @@ function getBaseLevelForConfiguration(levels) {
  * @param {string} configuration - Scale configuration key
  * @returns {Array} Array of color objects with level, hsl, rgb, hex properties
  */
-function createColorScale(baseHSL, configuration = 'current') {
+function createColorScale(baseHSL, configuration = 'diatonic') {
     const config = SCALE_CONFIGURATIONS[configuration];
     if (!config) {
         throw new Error(`Unknown scale configuration: ${configuration}`);
@@ -401,19 +672,26 @@ function generateJSObject(colorScale, colorName = 'primary') {
  * @param {string} colorName - Color name
  * @returns {string} JSON string
  */
-function generateJSON(colorScale, colorName = 'primary') {
+function generateJSON(colorScale, colorName = 'primary', options = {}) {
     const jsonObj = {
         name: colorName,
         metadata: {
             generatedBy: 'Color Scale Generator',
             timestamp: new Date().toISOString(),
-            version: '1.0.0'
+            version: '1.0.0',
+            algorithm: options.algorithm || 'standard',
+            interpolationMethod: options.interpolationMethod || 'hsl',
+            enhancedFeatures: {
+                perceptualUniformity: options.usePerceptualUniformity || false,
+                bezierInterpolation: options.enableBezierInterpolation || false
+            }
         },
+        qualityMetrics: options.qualityMetrics || null,
         colors: {}
     };
     
     colorScale.forEach(color => {
-        jsonObj.colors[color.level] = {
+        const colorObj = {
             hex: color.hex,
             rgb: color.rgb,
             hsl: color.hsl,
@@ -424,6 +702,22 @@ function generateJSON(colorScale, colorName = 'primary') {
                 wcagAALarge: color.blackPassesLarge || color.whitePassesLarge
             }
         };
+        
+        // Add enhanced algorithm data if available
+        if (color.lch) {
+            colorObj.lch = color.lch;
+        }
+        if (color.deltaE) {
+            colorObj.deltaE = color.deltaE;
+        }
+        if (color.perceptualUniformity) {
+            colorObj.perceptualUniformity = color.perceptualUniformity;
+        }
+        if (color.colorHarmony) {
+            colorObj.colorHarmony = color.colorHarmony;
+        }
+        
+        jsonObj.colors[color.level] = colorObj;
     });
     
     return JSON.stringify(jsonObj, null, 2);
@@ -670,6 +964,93 @@ function generateCSSVariablesWithDarkMode(lightScale, darkScale, colorName = 'pr
 }
 
 /**
+ * Generate CSS variables string with dark mode and original scale
+ * @param {Array} lightScale - Light mode color scale (accessible)
+ * @param {Array} darkScale - Dark mode color scale
+ * @param {Array} originalScale - Original non-accessible scale
+ * @param {string} colorName - Base name for CSS variables
+ * @returns {string} CSS variables string with all scales
+ */
+function generateCSSVariablesWithOriginal(lightScale, darkScale, originalScale, colorName = 'primary') {
+    const cssLines = [':root {'];
+    
+    cssLines.push('  /* Original Scale (Non-Accessible) */');
+    
+    // Original scale variables (first)
+    originalScale.forEach(color => {
+        const variableName = `--${colorName}-${color.level}-original`;
+        cssLines.push(`  ${variableName}: ${color.hex};`);
+    });
+    
+    cssLines.push('');
+    cssLines.push('  /* Accessible Scale */');
+    
+    // Light mode variables (accessible)
+    lightScale.forEach(color => {
+        const variableName = `--${colorName}-${color.level}`;
+        cssLines.push(`  ${variableName}: ${color.hex};`);
+    });
+    
+    cssLines.push('}');
+    
+    if (darkScale) {
+        cssLines.push('');
+        cssLines.push('/* Dark mode variables */');
+        cssLines.push('[data-theme="dark"] {');
+        
+        // Dark mode variables
+        darkScale.forEach(color => {
+            const variableName = `--${colorName}-${color.level}`;
+            cssLines.push(`  ${variableName}: ${color.hex};`);
+        });
+        
+        cssLines.push('}');
+    }
+    
+    return cssLines.join('\n');
+}
+
+/**
+ * Generate SCSS variables with original scale included
+ * @param {Array} lightScale - Light mode color scale (accessible)
+ * @param {Array} darkScale - Dark mode color scale
+ * @param {Array} originalScale - Original non-accessible scale
+ * @param {string} colorName - Base name for SCSS variables
+ * @returns {string} SCSS variables string with all scales
+ */
+function generateSCSSVariablesWithOriginal(lightScale, darkScale, originalScale, colorName = 'primary') {
+    const scssLines = ['// Original scale (non-accessible)'];
+    
+    // Original scale variables (first)
+    originalScale.forEach(color => {
+        const variableName = `$${colorName}-${color.level}-original`;
+        scssLines.push(`${variableName}: ${color.hex};`);
+    });
+    
+    scssLines.push('');
+    scssLines.push('// Accessible colors');
+    
+    // Accessible light mode variables
+    lightScale.forEach(color => {
+        const variableName = `$${colorName}-${color.level}`;
+        scssLines.push(`${variableName}: ${color.hex};`);
+    });
+    
+    if (darkScale) {
+        scssLines.push('');
+        scssLines.push('// Dark mode colors');
+        
+        // Dark mode variables
+        darkScale.forEach(color => {
+            const variableName = `$${colorName}-${color.level}-dark`;
+            scssLines.push(`${variableName}: ${color.hex};`);
+        });
+    }
+    
+    return scssLines.join('\n');
+}
+
+/**
  * Generate SCSS variables with dark mode support
  * @param {Array} lightScale - Light mode color scale
  * @param {Array} darkScale - Dark mode color scale
@@ -704,22 +1085,29 @@ function generateSCSSVariablesWithDarkMode(lightScale, darkScale, colorName = 'p
  * @param {string} colorName - Color name
  * @returns {string} JSON string with dark mode
  */
-function generateJSONWithDarkMode(lightScale, darkScale, colorName = 'primary') {
+function generateJSONWithDarkMode(lightScale, darkScale, colorName = 'primary', options = {}) {
     const jsonObj = {
         name: colorName,
         metadata: {
             generatedBy: 'Color Scale Generator',
             timestamp: new Date().toISOString(),
             version: '1.0.0',
-            includesDarkMode: true
+            includesDarkMode: true,
+            algorithm: options.algorithm || 'standard',
+            interpolationMethod: options.interpolationMethod || 'hsl',
+            enhancedFeatures: {
+                perceptualUniformity: options.usePerceptualUniformity || false,
+                bezierInterpolation: options.enableBezierInterpolation || false
+            }
         },
+        qualityMetrics: options.qualityMetrics || null,
         lightMode: {},
         darkMode: {}
     };
     
-    // Light mode colors
-    lightScale.forEach(color => {
-        jsonObj.lightMode[color.level] = {
+    // Helper function to process color data
+    const processColor = (color) => {
+        const colorObj = {
             hex: color.hex,
             rgb: color.rgb,
             hsl: color.hsl,
@@ -730,24 +1118,231 @@ function generateJSONWithDarkMode(lightScale, darkScale, colorName = 'primary') 
                 wcagAALarge: color.blackPassesLarge || color.whitePassesLarge
             }
         };
+        
+        // Add enhanced algorithm data if available
+        if (color.lch) colorObj.lch = color.lch;
+        if (color.deltaE) colorObj.deltaE = color.deltaE;
+        if (color.perceptualUniformity) colorObj.perceptualUniformity = color.perceptualUniformity;
+        if (color.colorHarmony) colorObj.colorHarmony = color.colorHarmony;
+        
+        return colorObj;
+    };
+    
+    // Light mode colors
+    lightScale.forEach(color => {
+        jsonObj.lightMode[color.level] = processColor(color);
     });
     
     // Dark mode colors
     darkScale.forEach(color => {
-        jsonObj.darkMode[color.level] = {
-            hex: color.hex,
-            rgb: color.rgb,
-            hsl: color.hsl,
-            accessibility: {
-                blackContrast: color.blackRatio,
-                whiteContrast: color.whiteRatio,
-                wcagAANormal: color.blackPassesNormal || color.whitePassesNormal,
-                wcagAALarge: color.blackPassesLarge || color.whitePassesLarge
-            }
-        };
+        jsonObj.darkMode[color.level] = processColor(color);
     });
     
     return JSON.stringify(jsonObj, null, 2);
+}
+
+/**
+ * Generate JSON with original scale included
+ * @param {Array} lightScale - Light mode color scale (accessible)
+ * @param {Array} darkScale - Dark mode color scale
+ * @param {Array} originalScale - Original non-accessible scale
+ * @param {string} colorName - Color name
+ * @param {Object} options - Generation options
+ * @returns {string} JSON string with all scales
+ */
+function generateJSONWithOriginal(lightScale, darkScale, originalScale, colorName = 'primary', options = {}) {
+    const jsonObj = {
+        name: colorName,
+        metadata: {
+            generatedBy: 'Color Scale Generator',
+            timestamp: new Date().toISOString(),
+            version: '1.0.0',
+            includesDarkMode: !!darkScale,
+            includesOriginalScale: true,
+            algorithm: options.algorithm || 'standard',
+            interpolationMethod: options.interpolationMethod || 'hsl',
+            enhancedFeatures: {
+                perceptualUniformity: options.usePerceptualUniformity || false,
+                bezierInterpolation: options.enableBezierInterpolation || false
+            }
+        },
+        qualityMetrics: options.qualityMetrics || null,
+        originalScale: {},
+        accessibleScale: {}
+    };
+    
+    if (darkScale) {
+        jsonObj.darkMode = {};
+    }
+    
+    // Helper function to process color data
+    const processColor = (color) => ({
+        hex: color.hex,
+        rgb: color.rgb,
+        hsl: color.hsl,
+        accessibility: {
+            blackContrast: color.blackRatio,
+            whiteContrast: color.whiteRatio,
+            wcagAANormal: color.blackPassesNormal || color.whitePassesNormal,
+            wcagAALarge: color.blackPassesLarge || color.whitePassesLarge
+        }
+    });
+    
+    // Original scale colors (non-accessible) - first
+    originalScale.forEach(color => {
+        jsonObj.originalScale[color.level] = processColor(color);
+    });
+    
+    // Accessible light mode colors
+    lightScale.forEach(color => {
+        jsonObj.accessibleScale[color.level] = processColor(color);
+    });
+    
+    // Dark mode colors (if provided)
+    if (darkScale) {
+        darkScale.forEach(color => {
+            jsonObj.darkMode[color.level] = processColor(color);
+        });
+    }
+    
+    return JSON.stringify(jsonObj, null, 2);
+}
+
+/**
+ * Generate Enhanced Analytics JSON with comprehensive data
+ * @param {Array} lightScale - Light mode color scale
+ * @param {Array} darkScale - Dark mode color scale
+ * @param {string} colorName - Color name
+ * @param {Object} options - Enhanced options
+ * @returns {string} Enhanced analytics JSON string
+ */
+function generateEnhancedAnalytics(lightScale, darkScale, colorName = 'primary', options = {}) {
+    const currentTime = new Date();
+    
+    const analyticsObj = {
+        $schema: "https://colorscale.shaharben.com/schema/enhanced-analytics-v1.json",
+        name: colorName,
+        metadata: {
+            generatedBy: 'Color Scale Generator',
+            version: '1.0.0',
+            timestamp: currentTime.toISOString(),
+            generator: {
+                algorithm: options.algorithm || 'enhanced',
+                interpolationMethod: options.interpolationMethod || 'lch',
+                enhancedFeatures: {
+                    perceptualUniformity: options.usePerceptualUniformity || false,
+                    bezierInterpolation: options.enableBezierInterpolation || false,
+                    lchColorSpace: options.interpolationMethod === 'lch',
+                    deltaECalculation: true
+                },
+                performance: {
+                    generationTime: options.generationTime || 0,
+                    memoryUsage: options.memoryUsage || 0
+                }
+            }
+        },
+        qualityMetrics: options.qualityMetrics || {
+            perceptualUniformity: null,
+            accessibilityScore: null,
+            colorHarmony: null,
+            smoothness: null,
+            overallScore: null
+        },
+        analysis: {
+            totalColors: lightScale.length,
+            accessiblePairs: 0,
+            contrastRatioRange: { min: 21, max: 1 },
+            lightnessDistribution: {},
+            saturationDistribution: {},
+            hueDistribution: {},
+            recommendations: []
+        },
+        lightMode: {},
+        darkMode: {}
+    };
+
+    // Helper function to analyze and process color data
+    const processColorScale = (scale, mode) => {
+        const result = {};
+        let accessibleCount = 0;
+        
+        scale.forEach((color, index) => {
+            const colorData = {
+                level: color.level,
+                hex: color.hex,
+                rgb: color.rgb,
+                hsl: color.hsl,
+                accessibility: {
+                    blackContrast: color.blackRatio,
+                    whiteContrast: color.whiteRatio,
+                    wcagAANormal: color.blackPassesNormal || color.whitePassesNormal,
+                    wcagAALarge: color.blackPassesLarge || color.whitePassesLarge,
+                    wcagAAANormal: (color.blackRatio >= 7) || (color.whiteRatio >= 7),
+                    preferredTextColor: color.preferredTextColor
+                },
+                position: {
+                    index: index,
+                    isBase: color.level === 400,
+                    isExtreme: color.level === 50 || color.level === 900
+                }
+            };
+            
+            // Add enhanced algorithm data
+            if (color.lch) colorData.lch = color.lch;
+            if (color.deltaE) colorData.deltaE = color.deltaE;
+            if (color.perceptualUniformity) colorData.perceptualUniformity = color.perceptualUniformity;
+            if (color.colorHarmony) colorData.colorHarmony = color.colorHarmony;
+            
+            // Update analytics
+            if (colorData.accessibility.wcagAANormal) accessibleCount++;
+            analyticsObj.analysis.contrastRatioRange.min = Math.min(analyticsObj.analysis.contrastRatioRange.min, Math.min(color.blackRatio, color.whiteRatio));
+            analyticsObj.analysis.contrastRatioRange.max = Math.max(analyticsObj.analysis.contrastRatioRange.max, Math.max(color.blackRatio, color.whiteRatio));
+            
+            result[color.level] = colorData;
+        });
+        
+        if (mode === 'light') {
+            analyticsObj.analysis.accessiblePairs = accessibleCount;
+        }
+        
+        return result;
+    };
+    
+    // Process both scales
+    analyticsObj.lightMode = processColorScale(lightScale, 'light');
+    if (darkScale && darkScale.length > 0) {
+        analyticsObj.darkMode = processColorScale(darkScale, 'dark');
+    }
+    
+    // Generate recommendations based on analysis
+    const recommendations = [];
+    if (analyticsObj.analysis.accessiblePairs < lightScale.length * 0.7) {
+        recommendations.push({
+            type: 'accessibility',
+            severity: 'warning',
+            message: 'Consider enabling accessibility optimization for better contrast ratios'
+        });
+    }
+    
+    if (options.qualityMetrics && options.qualityMetrics.perceptualUniformity < 0.6) {
+        recommendations.push({
+            type: 'perceptual',
+            severity: 'info',
+            message: 'Enable perceptual uniformity for more visually consistent color progression'
+        });
+    }
+    
+    if (!options.usePerceptualUniformity && options.interpolationMethod === 'hsl') {
+        recommendations.push({
+            type: 'algorithm',
+            severity: 'info',
+            message: 'Consider using LCH interpolation for better perceptual uniformity'
+        });
+    }
+    
+    analyticsObj.analysis.recommendations = recommendations;
+    
+    return JSON.stringify(analyticsObj, null, 2);
 }
 
 /**
@@ -772,6 +1367,48 @@ function generateJSObjectWithDarkMode(lightScale, darkScale, colorName = 'primar
     return `const ${colorName} = {
   light: ${JSON.stringify(lightObj, null, 2)},
   dark: ${JSON.stringify(darkObj, null, 2)}
+};`;
+}
+
+/**
+ * Generate JavaScript object with original scale included
+ * @param {Array} lightScale - Light mode color scale (accessible)
+ * @param {Array} darkScale - Dark mode color scale
+ * @param {Array} originalScale - Original non-accessible scale
+ * @param {string} colorName - Object name
+ * @returns {string} JavaScript object string with all scales
+ */
+function generateJSObjectWithOriginal(lightScale, darkScale, originalScale, colorName = 'primary') {
+    const accessibleObj = {};
+    const originalObj = {};
+    const darkObj = darkScale ? {} : null;
+    
+    // Original scale (first)
+    originalScale.forEach(color => {
+        originalObj[color.level] = color.hex;
+    });
+    
+    // Accessible scale
+    lightScale.forEach(color => {
+        accessibleObj[color.level] = color.hex;
+    });
+    
+    if (darkScale) {
+        darkScale.forEach(color => {
+            darkObj[color.level] = color.hex;
+        });
+    }
+    
+    let objectContent = `  original: ${JSON.stringify(originalObj, null, 2)},
+  accessible: ${JSON.stringify(accessibleObj, null, 2)}`;
+    
+    if (darkScale) {
+        objectContent += `,
+  dark: ${JSON.stringify(darkObj, null, 2)}`;
+    }
+    
+    return `const ${colorName} = {
+${objectContent}
 };`;
 }
 

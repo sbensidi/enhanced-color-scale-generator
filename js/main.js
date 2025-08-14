@@ -77,13 +77,20 @@ function setupErrorHandling() {
     // Handle uncaught JavaScript errors
     window.addEventListener('error', (event) => {
         console.error('Uncaught error:', event.error);
-        showError(`An unexpected error occurred: ${event.error.message}`);
+        const errorMessage = event.error && event.error.message ? 
+            event.error.message : 
+            event.message || 'Unknown error occurred';
+        showError(`An unexpected error occurred: ${errorMessage}`);
     });
     
     // Handle unhandled promise rejections
     window.addEventListener('unhandledrejection', (event) => {
         console.error('Unhandled promise rejection:', event.reason);
-        showError('An unexpected error occurred. Please try again.');
+        const reason = event.reason;
+        const errorMessage = reason && typeof reason === 'object' && reason.message ?
+            reason.message :
+            typeof reason === 'string' ? reason : 'An unexpected error occurred. Please try again.';
+        showError(errorMessage);
         event.preventDefault(); // Prevent default browser error handling
     });
     

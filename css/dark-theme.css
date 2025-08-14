@@ -255,3 +255,74 @@
 .dark-theme .sticky-color-picker-text:focus {
     background: rgba(96, 165, 250, 0.05);
 }
+
+/* Dark theme for Enhanced Algorithm Controls */
+.dark-theme .enhanced-algorithm-controls {
+    background: #1f2937;
+    border-color: #374151;
+}
+
+.dark-theme .inline-settings-label {
+    color: #f9fafb;
+}
+
+.dark-theme .control-separator {
+    color: #6b7280;
+}
+
+/* Toggle controls in dark theme */
+.dark-theme .enhanced-algorithm-controls .toggle-text {
+    color: #d1d5db;
+}
+
+.dark-theme .enhanced-algorithm-controls .toggle-track {
+    background: #374151;
+    border-color: #4b5563;
+}
+
+.dark-theme .enhanced-algorithm-controls .toggle-thumb {
+    background: #1f2937;
+    border-color: #4b5563;
+}
+
+.dark-theme .enhanced-algorithm-controls .toggle-container input[type="checkbox"]:checked + .toggle-track {
+    background: #3b82f6;
+    border-color: #3b82f6;
+}
+
+.dark-theme .enhanced-algorithm-controls .toggle-container input[type="checkbox"]:checked + .toggle-track .toggle-thumb {
+    background: #ffffff;
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Select control in dark theme */
+.dark-theme .enhanced-algorithm-controls .select-label {
+    color: #9ca3af;
+}
+
+.dark-theme .enhanced-algorithm-controls .algorithm-select {
+    background: #374151;
+    border-color: #4b5563;
+    color: #f9fafb;
+}
+
+.dark-theme .enhanced-algorithm-controls .algorithm-select:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+}
+
+.dark-theme .enhanced-algorithm-controls .algorithm-select option {
+    background: #374151;
+    color: #f9fafb;
+}
+
+/* Dark theme support for minimal indicators */
+.dark-theme .minimal-level-indicator,
+.dark-theme .minimal-hex-value,
+.dark-theme .minimal-accessibility-full {
+    background: rgba(0, 0, 0, 0.4);
+}
+
+.dark-theme .minimal-score-circle.white-circle {
+    border-color: rgba(255, 255, 255, 0.3);
+}

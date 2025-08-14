@@ -4,10 +4,71 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Color Scale Generator - Create Beautiful, Accessible Color Palettes</title>
-    <meta name="description" content="Generate complete color scales with WCAG AA accessibility validation, dark mode variants, and CSS variables output.">
+    <meta name="description" content="Transform any color into professional design systems. Generate accessible color scales with WCAG AA compliance, dark mode support, and export to CSS, SCSS, Tailwind, JSON formats.">
+    
+    <!-- SEO Meta Tags -->
+    <meta name="keywords" content="color scale, design system, accessibility, WCAG, CSS variables, color palette, dark mode, color generator, web design">
+    <meta name="author" content="Color Scale Generator">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://colorscale.shaharben.com">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://colorscale.shaharben.com">
+    <meta property="og:title" content="Color Scale Generator - Professional Design System Tool">
+    <meta property="og:description" content="Transform any color into accessible design systems with intelligent algorithms. Export to CSS, SCSS, Tailwind, and more formats with full WCAG AA compliance.">
+    <meta property="og:image" content="https://colorscale.shaharben.com/assets/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:site_name" content="Color Scale Generator">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://colorscale.shaharben.com">
+    <meta property="twitter:title" content="Color Scale Generator - Professional Design System Tool">
+    <meta property="twitter:description" content="Transform any color into accessible design systems with intelligent algorithms. Export to CSS, SCSS, Tailwind, and more formats.">
+    <meta property="twitter:image" content="https://colorscale.shaharben.com/assets/og-image.png">
+    
+    <!-- Additional Meta Tags -->
+    <meta name="theme-color" content="#3b82f6">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Color Scale Generator">
+    
+    <!-- Structured Data / Schema Markup -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Color Scale Generator",
+      "description": "Professional color scale generator with accessibility validation and multiple export formats",
+      "url": "https://colorscale.shaharben.com",
+      "applicationCategory": "DesignApplication",
+      "operatingSystem": "Web Browser",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "creator": {
+        "@type": "Organization",
+        "name": "Color Scale Generator Team"
+      },
+      "featureList": [
+        "WCAG AA accessibility validation",
+        "Dark mode color generation",
+        "Multiple export formats (CSS, SCSS, Tailwind, JSON)",
+        "Professional design system creation",
+        "Real-time color preview",
+        "Enhanced algorithm options"
+      ],
+      "screenshot": "https://colorscale.shaharben.com/assets/app-screenshot.png"
+    }
+    </script>
     
     <!-- CSS Files -->
     <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/enhanced-styles.css">
     <link rel="stylesheet" href="css/light-theme.css">
     <link rel="stylesheet" href="css/dark-theme.css">
     
@@ -71,20 +132,27 @@
                         <label class="sticky-control-label">Scale:</label>
                         <select id="stickyScaleSelect" class="sticky-scale-select" title="Change scale">
                             <option value="minimal">1 Level</option>
-                            <option value="simple">3 Levels</option>
-                            <option value="standard">5 Levels</option>
-                            <option value="current" selected>7 Levels</option>
-                            <option value="extended">9 Levels</option>
+                            <option value="triad" selected>3 Levels</option>
+                            <option value="pentatonic">5 Levels</option>
+                            <option value="diatonic">7 Levels</option>
+                            <option value="chromatic">9 Levels</option>
                         </select>
                     </div>
                     
                     <div class="sticky-control-group">
                         <label class="sticky-control-label">Accessibility:</label>
                         <select id="stickyAccessibilitySelect" class="sticky-scale-select" title="Change accessibility mode">
-                            <option value="full" selected>Full (Black + White)</option>
-                            <option value="black-only">Black Text Only</option>
-                            <option value="white-only">White Text Only</option>
+                            <option value="full" selected>Black + White Text</option>
+                            <option value="black-only">Black Text</option>
+                            <option value="white-only">White Text</option>
                         </select>
+                    </div>
+                    
+                    <div class="sticky-control-group">
+                        <label class="sticky-control-label">Enhanced Mode:</label>
+                        <button class="sticky-enhanced-toggle" id="stickyEnhancedAlgorithmsToggle" aria-label="Toggle enhanced mode" title="Toggle enhanced mode">
+                            <div class="sticky-toggle-thumb"></div>
+                        </button>
                     </div>
                     
                     <div class="sticky-control-group">
@@ -123,7 +191,7 @@
             </div>
             
             <div class="header-description">
-                <p class="app-subtitle">Transform any color into a professional design system with intelligent scale generation, automatic accessibility fixes, and seamless dark mode support. Simply pick your brand color and get production-ready palettes instantly.</p>
+                <p class="app-subtitle">Transform any color into a professional design system.<br>Pick your brand color and get accessible, production-ready palettes instantly.</p>
                 <div class="learn-more-wrapper">
                     <a href="#how-it-works" class="learn-more-link">Learn how it works →</a>
                 </div>
@@ -182,20 +250,17 @@
                         <label class="config-label">Scale Configuration:</label>
                         <div class="scale-controls-row">
                             <div class="segmented-control" id="scaleSegmentedControl">
-                                <input type="radio" name="scaleRange" value="minimal" class="segment-input" id="scale-minimal">
-                                <label for="scale-minimal" class="segment-label" data-levels="1">Minimal (1)</label>
+                                <input type="radio" name="scaleRange" value="triad" class="segment-input" id="scale-simple" checked>
+                                <label for="scale-simple" class="segment-label" data-levels="3">Triad (3)</label>
                                 
-                                <input type="radio" name="scaleRange" value="simple" class="segment-input" id="scale-simple">
-                                <label for="scale-simple" class="segment-label" data-levels="3">Simple (3)</label>
+                                <input type="radio" name="scaleRange" value="pentatonic" class="segment-input" id="scale-standard">
+                                <label for="scale-standard" class="segment-label" data-levels="5">Pentatonic (5)</label>
                                 
-                                <input type="radio" name="scaleRange" value="standard" class="segment-input" id="scale-standard">
-                                <label for="scale-standard" class="segment-label" data-levels="5">Standard (5)</label>
+                                <input type="radio" name="scaleRange" value="diatonic" class="segment-input" id="scale-current">
+                                <label for="scale-current" class="segment-label" data-levels="7">Diatonic (7)</label>
                                 
-                                <input type="radio" name="scaleRange" value="current" class="segment-input" id="scale-current" checked>
-                                <label for="scale-current" class="segment-label" data-levels="7">Current (7)</label>
-                                
-                                <input type="radio" name="scaleRange" value="extended" class="segment-input" id="scale-extended">
-                                <label for="scale-extended" class="segment-label" data-levels="9">Extended (9)</label>
+                                <input type="radio" name="scaleRange" value="chromatic" class="segment-input" id="scale-extended">
+                                <label for="scale-extended" class="segment-label" data-levels="9">Chromatic (9)</label>
                                 
                                 <div class="segment-indicator" id="segmentIndicator"></div>
                             </div>
@@ -208,24 +273,85 @@
                         <div class="accessibility-controls-row">
                             <div class="segmented-control" id="accessibilitySegmentedControl">
                                 <input type="radio" name="accessibilityMode" value="full" class="segment-input" id="accessibility-full" checked>
-                                <label for="accessibility-full" class="segment-label">Full (Black + White)</label>
+                                <label for="accessibility-full" class="segment-label">Black + White Text</label>
                                 
                                 <input type="radio" name="accessibilityMode" value="black-only" class="segment-input" id="accessibility-black">
-                                <label for="accessibility-black" class="segment-label">Black Text Only</label>
+                                <label for="accessibility-black" class="segment-label">Black Text</label>
                                 
                                 <input type="radio" name="accessibilityMode" value="white-only" class="segment-input" id="accessibility-white">
-                                <label for="accessibility-white" class="segment-label">White Text Only</label>
+                                <label for="accessibility-white" class="segment-label">White Text</label>
                                 
                                 <div class="segment-indicator" id="accessibilityIndicator"></div>
                             </div>
-                            
-                            <!-- View Mode Toggle -->
-                            <div class="view-mode-toggle">
-                                <button class="toggle-track" id="viewModeToggle" aria-label="Toggle minimal view">
-                                    <div class="toggle-thumb"></div>
-                                </button>
-                                <span class="toggle-label">Hide Details</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Toggles Row -->
+                    <div class="toggles-row">
+                        <!-- Enhanced Mode Toggle -->
+                        <div class="enhanced-algorithms-toggle">
+                            <button class="toggle-track" id="enhancedAlgorithmsToggle" aria-label="Toggle enhanced mode">
+                                <div class="toggle-thumb"></div>
+                            </button>
+                            <span class="toggle-label">Enhanced Mode</span>
+                        </div>
+                        
+                        <!-- View Mode Toggle -->
+                        <div class="view-mode-toggle">
+                            <button class="toggle-track" id="viewModeToggle" aria-label="Toggle minimal view">
+                                <div class="toggle-thumb"></div>
+                            </button>
+                            <span class="toggle-label">Hide Details</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Enhanced Algorithm Controls - Horizontal Layout -->
+                <div class="enhanced-algorithm-controls" id="algorithmControls">
+                    <!-- Algorithm Options Row -->
+                    <div class="algorithm-options-row">
+                        <span class="inline-settings-label">Enhanced Mode Settings:</span>
+                        
+                        <div class="toggle-control">
+                                <label class="toggle-container">
+                                    <input type="checkbox" id="perceptualUniformityToggle" checked>
+                                    <span class="toggle-track">
+                                        <span class="toggle-thumb"></span>
+                                    </span>
+                                    <span class="toggle-text">Perceptual Uniformity</span>
+                                </label>
                             </div>
+                            
+                            <div class="control-separator">|</div>
+                            
+                            <div class="toggle-control">
+                                <label class="toggle-container">
+                                    <input type="checkbox" id="bezierInterpolationToggle">
+                                    <span class="toggle-track">
+                                        <span class="toggle-thumb"></span>
+                                    </span>
+                                    <span class="toggle-text">Bezier Interpolation</span>
+                                </label>
+                            </div>
+                            
+                            <div class="control-separator">|</div>
+                            
+                            <div class="select-control">
+                                <label for="interpolationMethodSelect" class="select-label">Interpolation:</label>
+                                <select id="interpolationMethodSelect" class="algorithm-select">
+                                    <option value="lch">LCH (Recommended)</option>
+                                    <option value="hsl">HSL (Standard)</option>
+                                    <option value="rgb">RGB (Linear)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Quality Metrics Panel - Hidden for now -->
+                    <div class="quality-metrics-panel" id="qualityMetricsPanel" style="display: none;">
+                        <label class="config-label">Quality Analysis:</label>
+                        <div class="quality-metrics-content" id="qualityMetricsContent">
+                            <!-- Quality metrics will be populated by JavaScript -->
                         </div>
                     </div>
                 </div>
@@ -272,7 +398,7 @@
                     <!-- Accessible Light Mode Column -->
                     <div class="palette-column hidden" id="accessibleLightColumn">
                         <div class="column-header">
-                            <h3 class="column-title" id="accessibleLightTitle">Accessible Alternative</h3>
+                            <h3 class="column-title" id="accessibleLightTitle">Light Mode</h3>
                             <div class="accessibility-indicator accessible">
                                 Accessible
                             </div>
@@ -288,7 +414,7 @@
                     <!-- Accessible Dark Mode Column -->
                     <div class="palette-column hidden" id="accessibleDarkColumn">
                         <div class="column-header">
-                            <h3 class="column-title" id="accessibleDarkTitle">Dark Mode - Accessible Alternative</h3>
+                            <h3 class="column-title" id="accessibleDarkTitle">Dark Mode</h3>
                             <div class="accessibility-indicator accessible">
                                 Accessible
                             </div>
@@ -423,6 +549,7 @@
                         <option value="adobe-ase">Adobe ASE (Color Swatches)</option>
                         <option value="sketch-palette">Sketch Palette</option>
                         <option value="json">JSON (Detailed)</option>
+                        <option value="enhanced-analytics">Enhanced Analytics JSON</option>
                         <option value="js-object">JavaScript Object</option>
                         <option value="swift-colors">Swift Color Extension</option>
                         <option value="android-colors">Android Colors XML</option>
@@ -432,6 +559,10 @@
                         <label class="export-checkbox-label">
                             <input type="checkbox" id="includeDarkMode" class="export-checkbox" checked>
                             <span class="checkbox-text">Include Dark Mode Scale</span>
+                        </label>
+                        <label class="export-checkbox-label">
+                            <input type="checkbox" id="includeOriginalScale" class="export-checkbox">
+                            <span class="checkbox-text">Include Original Scale (Non-Accessible)</span>
                         </label>
                     </div>
                 </div>
@@ -463,6 +594,11 @@
                 <h3 class="export-title">How the Color Scale Generator Works</h3>
                 
                 <div class="how-it-works-content">
+                    <div class="base-color-section">
+                        <h4 class="features-subtitle">The Accessibility-First Foundation</h4>
+                        <p class="base-color-explanation">Your input color becomes <strong>Level 400</strong> - the <strong>accessible foundation</strong> of the entire scale.<br>This base color is validated against <strong>WCAG AA standards</strong> for both <strong>black and white text</strong>, ensuring <strong>perfect readability</strong>.<br>From this proven accessible anchor, the entire color scale is <strong>mathematically derived</strong> to maintain <strong>visual harmony</strong> while preserving <strong>accessibility relationships</strong>.</p>
+                    </div>
+                    
                     <div class="features-overview">
                         <h4 class="features-subtitle">Core Features</h4>
                         <div class="features-grid">
@@ -553,6 +689,10 @@
                 <a href="https://www.w3.org/WAI/WCAG21/Understanding/contrast-minimum.html" target="_blank" rel="noopener">
                     WCAG AA Compliant
                 </a>
+                 • Color names by 
+                <a href="https://color.pizza" target="_blank" rel="noopener" style="text-decoration: none;">
+                    color.pizza
+                </a> 
             </p>
             <a href="https://www.buymeacoffee.com/shaharb" target="_blank" rel="noopener" class="buy-coffee-btn" aria-label="Buy me a coffee">
                 <img src="./assets/bmc-logo.svg" alt="Buy me a coffee" width="20" height="20">
@@ -611,6 +751,9 @@
     </div>
 
     <!-- JavaScript Modules -->
+    <script src="js/error-handler.js"></script>
+    <script src="js/web-vitals.js"></script>
+    <script src="js/analytics.js"></script>
     <script src="js/color-utils.js"></script>
     <script src="js/accessibility.js"></script>
     <script src="js/color-spectrum-mapper.js"></script>

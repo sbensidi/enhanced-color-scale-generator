@@ -9,18 +9,25 @@ const AppState = {
     baseColor: '#3791c6',
     colorName: 'Ocean Blue',
     originalColorName: 'Ocean Blue', // Keep original color name separate
-    scaleConfiguration: 'current',
+    scaleConfiguration: 'triad',
     lightModeScale: [],
     darkModeScale: [],
     accessibleLightScale: null,
     accessibleDarkScale: null,
     isDarkModeActive: false,
-    isMinimalViewActive: false,
+    isMinimalViewActive: true,
     selectedExportFormat: 'css-variables',
     lastGenerationTime: 0,
     apiCallCount: 0,
     accessibilityMode: 'full', // Default to full accessibility mode
-    lightboxDarkMode: false // Default lightbox theme to light
+    lightboxDarkMode: false, // Default lightbox theme to light
+    
+    // Enhanced algorithm settings
+    useEnhancedAlgorithms: true,
+    usePerceptualUniformity: true,
+    interpolationMethod: 'lch',
+    enableBezierInterpolation: false,
+    qualityMetrics: null
 };
 
 // DOM elements
@@ -47,6 +54,9 @@ function initializeUIController() {
     
     // Initialize back to top button
     initializeBackToTop();
+    
+    // Initialize enhanced algorithm controls
+    initializeEnhancedControls();
     
     // Generate initial color scale
     generateInitialScale();
@@ -144,6 +154,7 @@ function cacheDOM() {
         exportSection: document.getElementById('exportSection'),
         exportFormat: document.getElementById('exportFormat'),
         includeDarkMode: document.getElementById('includeDarkMode'),
+        includeOriginalScale: document.getElementById('includeOriginalScale'),
         copyExportBtn: document.getElementById('copyExportBtn'),
         downloadExportBtn: document.getElementById('downloadExportBtn'),
         exportOutput: document.getElementById('exportOutput'),
@@ -181,7 +192,24 @@ function cacheDOM() {
         lightboxDarkModeToggle: document.getElementById('lightboxDarkModeToggle'),
         
         // Toast container
-        toastContainer: document.getElementById('toastContainer')
+        toastContainer: document.getElementById('toastContainer'),
+        
+        // Enhanced algorithm controls
+        algorithmControls: document.getElementById('algorithmControls'),
+        enhancedAlgorithmsToggle: document.getElementById('enhancedAlgorithmsToggle'),
+        stickyEnhancedAlgorithmsToggle: document.getElementById('stickyEnhancedAlgorithmsToggle'),
+        enhancedAlgorithmToggle: document.getElementById('enhancedAlgorithmToggle'),
+        perceptualUniformityToggle: document.getElementById('perceptualUniformityToggle'),
+        interpolationMethodSelect: document.getElementById('interpolationMethodSelect'),
+        bezierInterpolationToggle: document.getElementById('bezierInterpolationToggle'),
+        
+        // Quality metrics panel
+        qualityMetricsPanel: document.getElementById('qualityMetricsPanel'),
+        qualityMetricsContent: document.getElementById('qualityMetricsContent'),
+        
+        // Legacy elements
+        advancedSettingsHeader: document.getElementById('advancedSettingsHeader'),
+        advancedSettingsContent: document.getElementById('advancedSettingsContent')
     };
 }
 
@@ -222,6 +250,7 @@ function bindEvents() {
     // Export events
     domElements.exportFormat.addEventListener('change', handleExportFormatChange);
     domElements.includeDarkMode.addEventListener('change', handleIncludeDarkModeChange);
+    domElements.includeOriginalScale.addEventListener('change', handleIncludeOriginalScaleChange);
     domElements.copyExportBtn.addEventListener('click', handleCopyExport);
     domElements.downloadExportBtn.addEventListener('click', handleDownloadExport);
     
@@ -254,6 +283,31 @@ function bindEvents() {
     // Window events
     window.addEventListener('resize', handleWindowResize);
     window.addEventListener('scroll', handleHeaderScroll);
+    
+    // Enhanced algorithm control events
+    if (domElements.enhancedAlgorithmsToggle) {
+        domElements.enhancedAlgorithmsToggle.addEventListener('click', handleEnhancedAlgorithmsToggle);
+    }
+    if (domElements.stickyEnhancedAlgorithmsToggle) {
+        domElements.stickyEnhancedAlgorithmsToggle.addEventListener('click', handleEnhancedAlgorithmsToggle);
+    }
+    if (domElements.enhancedAlgorithmToggle) {
+        domElements.enhancedAlgorithmToggle.addEventListener('change', handleEnhancedAlgorithmToggle);
+    }
+    if (domElements.perceptualUniformityToggle) {
+        domElements.perceptualUniformityToggle.addEventListener('change', handlePerceptualUniformityToggle);
+    }
+    if (domElements.interpolationMethodSelect) {
+        domElements.interpolationMethodSelect.addEventListener('change', handleInterpolationMethodChange);
+    }
+    if (domElements.bezierInterpolationToggle) {
+        domElements.bezierInterpolationToggle.addEventListener('change', handleBezierInterpolationToggle);
+    }
+    
+    // Legacy accordion events (if still present)
+    if (domElements.advancedSettingsHeader) {
+        domElements.advancedSettingsHeader.addEventListener('click', handleAccordionToggle);
+    }
 }
 
 
@@ -607,6 +661,24 @@ async function generateAndUpdateColorScaleInternal(showLoadingStates = true) {
     const startTime = performance.now();
     
     try {
+        // Enhanced error handling wrapper
+        if (typeof window.ErrorHandler !== 'undefined') {
+            return await window.ErrorHandler.wrapAsync(async () => {
+                return await generateColorScaleInternalCore(showLoadingStates, startTime);
+            }, 'generateColorScale')();
+        } else {
+            return await generateColorScaleInternalCore(showLoadingStates, startTime);
+        }
+    } catch (error) {
+        // Fallback error handling if ErrorHandler is not available
+        console.error('Critical error in color scale generation:', error);
+        showToast('Failed to generate color scale. Please try again.', 'error');
+        throw error;
+    }
+}
+
+async function generateColorScaleInternalCore(showLoadingStates, startTime) {
+    try {
         // Show loading state conditionally
         if (showLoadingStates) {
             showLoading();
@@ -619,8 +691,23 @@ async function generateAndUpdateColorScaleInternal(showLoadingStates = true) {
             throw new Error('Invalid color format');
         }
         
-        // Generate light mode scale
-        AppState.lightModeScale = createColorScale(baseHSL, AppState.scaleConfiguration);
+        // Generate light mode scale using enhanced algorithms if available
+        if (AppState.useEnhancedAlgorithms && typeof createEnhancedColorScale === 'function') {
+            const enhancedOptions = {
+                usePerceptualUniformity: AppState.usePerceptualUniformity,
+                interpolationMethod: AppState.interpolationMethod,
+                enableBezierInterpolation: AppState.enableBezierInterpolation
+            };
+            AppState.lightModeScale = createEnhancedColorScale(baseHSL, AppState.scaleConfiguration, enhancedOptions);
+            
+            // Calculate quality metrics if available
+            if (typeof calculateQualityMetrics === 'function') {
+                AppState.qualityMetrics = calculateQualityMetrics(AppState.lightModeScale, baseHSL);
+            }
+        } else {
+            // Fallback to standard algorithm
+            AppState.lightModeScale = createColorScale(baseHSL, AppState.scaleConfiguration);
+        }
         
         // Check if base color passes accessibility criteria based on selected mode
         const baseColor400 = AppState.lightModeScale.find(c => c.level === 400);
@@ -635,7 +722,16 @@ async function generateAndUpdateColorScaleInternal(showLoadingStates = true) {
             try {
                 const accessibleLightHSL = findFullyAccessibleColor(baseHSL, 'light', AppState.accessibilityMode);
                 if (accessibleLightHSL) {
-                    AppState.accessibleLightScale = createColorScale(accessibleLightHSL, AppState.scaleConfiguration);
+                    if (AppState.useEnhancedAlgorithms && typeof createEnhancedColorScale === 'function') {
+                        const enhancedOptions = {
+                            usePerceptualUniformity: AppState.usePerceptualUniformity,
+                            interpolationMethod: AppState.interpolationMethod,
+                            enableBezierInterpolation: AppState.enableBezierInterpolation
+                        };
+                        AppState.accessibleLightScale = createEnhancedColorScale(accessibleLightHSL, AppState.scaleConfiguration, enhancedOptions);
+                    } else {
+                        AppState.accessibleLightScale = createColorScale(accessibleLightHSL, AppState.scaleConfiguration);
+                    }
                 }
             } catch (error) {
             }
@@ -644,15 +740,38 @@ async function generateAndUpdateColorScaleInternal(showLoadingStates = true) {
             try {
                 const accessibleDarkHSL = findFullyAccessibleColor(baseHSL, 'dark', AppState.accessibilityMode);
                 if (accessibleDarkHSL) {
-                    AppState.accessibleDarkScale = createColorScale(accessibleDarkHSL, AppState.scaleConfiguration);
+                    if (AppState.useEnhancedAlgorithms && typeof createEnhancedColorScale === 'function') {
+                        const enhancedOptions = {
+                            usePerceptualUniformity: AppState.usePerceptualUniformity,
+                            interpolationMethod: AppState.interpolationMethod,
+                            enableBezierInterpolation: AppState.enableBezierInterpolation
+                        };
+                        AppState.accessibleDarkScale = createEnhancedColorScale(accessibleDarkHSL, AppState.scaleConfiguration, enhancedOptions);
+                    } else {
+                        AppState.accessibleDarkScale = createColorScale(accessibleDarkHSL, AppState.scaleConfiguration);
+                    }
                 }
             } catch (error) {
             }
         }
         
-        // Generate dark mode scale - simply reverse the accessible scale (or original if no accessible)
+        // Generate dark mode scale using enhanced algorithms if available
         const scaleToReverse = AppState.accessibleLightScale || AppState.lightModeScale;
-        AppState.darkModeScale = createReversedDarkModeScale(scaleToReverse);
+        const baseHSLForDarkMode = AppState.accessibleLightScale ? 
+            (findFullyAccessibleColor(baseHSL, 'light', AppState.accessibilityMode) || baseHSL) : baseHSL;
+        
+        if (AppState.useEnhancedAlgorithms && typeof generateAdaptiveDarkMode === 'function') {
+            const darkModeOptions = {
+                environment: 'web', // Default to web environment
+                useAccessibleBase: !!AppState.accessibleLightScale,
+                saturationBoost: 5,
+                contrastAdjustment: 0.1
+            };
+            AppState.darkModeScale = generateAdaptiveDarkMode(scaleToReverse, baseHSLForDarkMode, darkModeOptions);
+        } else {
+            // Fallback to standard dark mode generation
+            AppState.darkModeScale = createReversedDarkModeScale(scaleToReverse);
+        }
         
         // Get color names
         await populateColorNames();
@@ -661,6 +780,7 @@ async function generateAndUpdateColorScaleInternal(showLoadingStates = true) {
         updatePaletteDisplay();
         updateExportSection();
         updateLivePreview(); // Always update live preview with new colors
+        updateQualityMetricsPanel(); // Update quality metrics if available
         
         // Update lightbox preview if it's open
         if (!domElements.previewLightbox.classList.contains('hidden')) {
@@ -822,7 +942,7 @@ function updateAccessibleColumnTitle(mode) {
     const accessibilityModeText = getAccessibilityModeText(AppState.accessibilityMode);
     
     if (mode === 'light') {
-        domElements.accessibleLightTitle.textContent = `${originalColorName} - Accessible Alternative`;
+        domElements.accessibleLightTitle.textContent = `${originalColorName} - Light Mode`;
     } else if (mode === 'dark') {
         domElements.accessibleDarkTitle.textContent = `${originalColorName} - Dark Mode`;
     }
@@ -957,9 +1077,9 @@ function getAccessibilityModeText(accessibilityMode) {
         case 'full':
             return 'All 4 Criteria';
         case 'black-only':
-            return 'Black Text Only';
+            return 'Black Text';
         case 'white-only':
-            return 'White Text Only';
+            return 'White Text';
         default:
             return 'Unknown Mode';
     }
@@ -1229,15 +1349,62 @@ function createMinimalColorCard(color) {
     const textColor = color.blackRatio > color.whiteRatio ? '#000000' : '#ffffff';
     levelIndicator.style.color = textColor;
     
-    card.appendChild(levelIndicator);
+    // Add copy icon
+    const copyIcon = document.createElement('div');
+    copyIcon.className = 'minimal-copy-icon';
+    copyIcon.innerHTML = `
+        <svg class="value-copy-icon" viewBox="0 0 24 24" fill="none">
+            <path d="M16 1H4C2.9 1 2 1.9 2 3V17H4V3H16V1ZM19 5H8C6.9 5 6 5.9 6 7V21C6 22.1 6.9 23 8 23H19C20.1 23 21 22.1 21 21V7C21 5.9 20.1 5 19 5ZM19 21H8V7H19V21Z" fill="currentColor"/>
+        </svg>
+    `;
+    copyIcon.style.color = textColor;
+    card.appendChild(copyIcon);
+    
+    // Create bottom info row with all indicators
+    const bottomInfoRow = document.createElement('div');
+    bottomInfoRow.className = 'minimal-bottom-info';
+    bottomInfoRow.style.color = textColor;
+    
+    // Level indicator
+    bottomInfoRow.appendChild(levelIndicator);
+    
+    // HEX value indicator
+    const hexIndicator = document.createElement('div');
+    hexIndicator.className = 'minimal-hex-value';
+    hexIndicator.textContent = color.hex;
+    bottomInfoRow.appendChild(hexIndicator);
+    
+    // Full accessibility info (compact version)
+    const accessibilityIndicator = document.createElement('div');
+    accessibilityIndicator.className = 'minimal-accessibility-full';
+    accessibilityIndicator.innerHTML = `
+        <div class="minimal-access-group">
+            <div class="minimal-score-circle black-circle">
+                <span class="minimal-score-number">${color.blackRatio}</span>
+                <div class="minimal-tests">
+                    <span class="minimal-test ${color.blackPassesNormal ? 'pass' : 'fail'}">${color.blackPassesNormal ? '✓' : '✗'}</span>
+                    <span class="minimal-test ${color.blackPassesLarge ? 'pass' : 'fail'}">${color.blackPassesLarge ? '✓' : '✗'}</span>
+                </div>
+            </div>
+        </div>
+        <div class="minimal-access-group">
+            <div class="minimal-score-circle white-circle">
+                <span class="minimal-score-number">${color.whiteRatio}</span>
+                <div class="minimal-tests">
+                    <span class="minimal-test ${color.whitePassesNormal ? 'pass' : 'fail'}">${color.whitePassesNormal ? '✓' : '✗'}</span>
+                    <span class="minimal-test ${color.whitePassesLarge ? 'pass' : 'fail'}">${color.whitePassesLarge ? '✓' : '✗'}</span>
+                </div>
+            </div>
+        </div>
+    `;
+    bottomInfoRow.appendChild(accessibilityIndicator);
+    
+    card.appendChild(bottomInfoRow);
     
     // Add click handler for copying hex value
     card.addEventListener('click', () => {
-        handleValueCopyButtonClick(color.hex, 'HEX', card);
+        handleValueCopyButtonClick(color.hex, 'HEX', copyIcon, textColor);
     });
-    
-    // Add hover tooltip
-    card.title = `Level ${color.level}: ${color.hex}\\nClick to copy`;
     
     return card;
 }
@@ -1245,14 +1412,14 @@ function createMinimalColorCard(color) {
 /**
  * Handle value copy button click for specific color format
  */
-async function handleValueCopyButtonClick(valueToCopy, format, buttonElement) {
+async function handleValueCopyButtonClick(valueToCopy, format, buttonElement, textColor = null) {
     try {
         await navigator.clipboard.writeText(valueToCopy);
         
         // Visual feedback - temporarily change icon to checkmark
         const originalHTML = buttonElement.innerHTML;
         buttonElement.innerHTML = `
-            <svg class="value-copy-icon" viewBox="0 0 24 24" fill="none">
+            <svg class="value-copy-icon" viewBox="0 0 24 24" fill="none" style="color: ${textColor || 'currentColor'}">
                 <path d="M9 16.17L4.83 12L3.41 13.41L9 19L21 7L19.59 5.59L9 16.17Z" fill="currentColor"/>
             </svg>
         `;
@@ -1327,28 +1494,45 @@ function handleIncludeDarkModeChange() {
 }
 
 /**
+ * Handle include original scale change
+ */
+function handleIncludeOriginalScaleChange() {
+    updateExportOutput();
+}
+
+/**
  * Update export output preview
  */
 function updateExportOutput() {
     const format = AppState.selectedExportFormat;
     const colorName = AppState.colorName.toLowerCase().replace(/\s+/g, '-');
     const includeDarkMode = domElements.includeDarkMode.checked;
+    const includeOriginalScale = domElements.includeOriginalScale.checked;
     let output = '';
     
     // Use accessible scale if available, otherwise use light mode scale
     const lightScale = AppState.accessibleLightScale || AppState.lightModeScale;
     const darkScale = AppState.darkModeScale;
+    const originalScale = AppState.lightModeScale; // The non-accessible original scale
     
     switch (format) {
         case 'css-variables':
-            output = includeDarkMode && darkScale ? 
-                generateCSSVariablesWithDarkMode(lightScale, darkScale, colorName) :
-                generateCSSVariables(lightScale, colorName);
+            if (includeOriginalScale && originalScale) {
+                output = generateCSSVariablesWithOriginal(lightScale, includeDarkMode ? darkScale : null, originalScale, colorName);
+            } else if (includeDarkMode && darkScale) {
+                output = generateCSSVariablesWithDarkMode(lightScale, darkScale, colorName);
+            } else {
+                output = generateCSSVariables(lightScale, colorName);
+            }
             break;
         case 'scss-variables':
-            output = includeDarkMode && darkScale ?
-                generateSCSSVariablesWithDarkMode(lightScale, darkScale, colorName) :
-                generateSCSSVariables(lightScale, colorName);
+            if (includeOriginalScale && originalScale) {
+                output = generateSCSSVariablesWithOriginal(lightScale, includeDarkMode ? darkScale : null, originalScale, colorName);
+            } else if (includeDarkMode && darkScale) {
+                output = generateSCSSVariablesWithDarkMode(lightScale, darkScale, colorName);
+            } else {
+                output = generateSCSSVariables(lightScale, colorName);
+            }
             break;
         case 'tailwind-config':
             output = includeDarkMode && darkScale ?
@@ -1381,14 +1565,39 @@ function updateExportOutput() {
                 generateAndroidColors(lightScale, colorName);
             break;
         case 'json':
-            output = includeDarkMode && darkScale ?
-                generateJSONWithDarkMode(lightScale, darkScale, AppState.colorName) :
-                generateJSON(lightScale, AppState.colorName);
+            const jsonOptions = {
+                algorithm: AppState.useEnhancedAlgorithms ? 'enhanced' : 'standard',
+                interpolationMethod: AppState.interpolationMethod,
+                usePerceptualUniformity: AppState.usePerceptualUniformity,
+                enableBezierInterpolation: AppState.enableBezierInterpolation,
+                qualityMetrics: AppState.qualityMetrics
+            };
+            
+            if (includeOriginalScale && originalScale) {
+                output = generateJSONWithOriginal(lightScale, includeDarkMode ? darkScale : null, originalScale, AppState.colorName, jsonOptions);
+            } else if (includeDarkMode && darkScale) {
+                output = generateJSONWithDarkMode(lightScale, darkScale, AppState.colorName, jsonOptions);
+            } else {
+                output = generateJSON(lightScale, AppState.colorName, jsonOptions);
+            }
+            break;
+        case 'enhanced-analytics':
+            const analyticsOptions = {
+                ...jsonOptions,
+                generationTime: AppState.lastGenerationTime,
+                memoryUsage: performance.memory ? performance.memory.usedJSHeapSize : 0
+            };
+            
+            output = generateEnhancedAnalytics(lightScale, darkScale, AppState.colorName, analyticsOptions);
             break;
         case 'js-object':
-            output = includeDarkMode && darkScale ?
-                generateJSObjectWithDarkMode(lightScale, darkScale, colorName) :
-                generateJSObject(lightScale, colorName);
+            if (includeOriginalScale && originalScale) {
+                output = generateJSObjectWithOriginal(lightScale, includeDarkMode ? darkScale : null, originalScale, colorName);
+            } else if (includeDarkMode && darkScale) {
+                output = generateJSObjectWithDarkMode(lightScale, darkScale, colorName);
+            } else {
+                output = generateJSObject(lightScale, colorName);
+            }
             break;
         default:
             output = '// Unknown format';
@@ -1402,11 +1611,58 @@ function updateExportOutput() {
  */
 async function handleCopyExport() {
     try {
-        await navigator.clipboard.writeText(domElements.exportOutput.textContent);
+        // Enhanced error handling
+        if (!navigator.clipboard) {
+            throw new Error('Clipboard API not supported');
+        }
+        
+        const content = domElements.exportOutput.textContent;
+        if (!content || content.trim() === '') {
+            throw new Error('No content to copy');
+        }
+        
+        await navigator.clipboard.writeText(content);
         showToast('Export code copied to clipboard!', 'success');
+        
+        // Track successful copy
+        if (typeof window.ErrorHandler !== 'undefined') {
+            window.ErrorHandler.reportCustomError(
+                `Successfully copied ${AppState.selectedExportFormat} export`,
+                'analytics',
+                { 
+                    action: 'copy_export',
+                    format: AppState.selectedExportFormat,
+                    contentLength: content.length,
+                    severity: 'info'
+                }
+            );
+        }
     } catch (error) {
         console.error('Failed to copy export:', error);
-        showToast('Failed to copy to clipboard', 'error');
+        
+        // Enhanced error reporting
+        if (typeof window.ErrorHandler !== 'undefined') {
+            window.ErrorHandler.reportCustomError(
+                `Failed to copy export: ${error.message}`,
+                'clipboard',
+                { 
+                    format: AppState.selectedExportFormat,
+                    browserSupport: !!navigator.clipboard,
+                    contentAvailable: !!domElements.exportOutput.textContent
+                }
+            );
+        }
+        
+        // Fallback: try to select text for manual copy
+        try {
+            const range = document.createRange();
+            range.selectNode(domElements.exportOutput);
+            window.getSelection().removeAllRanges();
+            window.getSelection().addRange(range);
+            showToast('Text selected. Press Ctrl+C (Cmd+C on Mac) to copy.', 'warning');
+        } catch (fallbackError) {
+            showToast('Copy failed. Please select the text manually.', 'error');
+        }
     }
 }
 
@@ -1429,6 +1685,7 @@ function handleDownloadExport() {
         'swift-colors': 'swift',
         'android-colors': 'xml',
         'json': 'json',
+        'enhanced-analytics': 'json',
         'js-object': 'js'
     };
     
@@ -1468,17 +1725,23 @@ function updateLivePreview() {
     
     // Determine which color scale to use
     let scaleToUse = AppState.lightModeScale;
+    let previewContext = 'light-original';
     
     if (domElements.previewAccessible.checked && AppState.accessibleLightScale) {
         scaleToUse = AppState.accessibleLightScale;
+        previewContext = 'light-accessible';
     }
     
     if (domElements.previewDarkMode.checked) {
         scaleToUse = AppState.darkModeScale;
+        previewContext = domElements.previewAccessible.checked && AppState.accessibleDarkScale ? 'dark-accessible' : 'dark-original';
     }
     
-    // Apply colors to preview
-    applyColorsToPreview(scaleToUse);
+    // Apply colors to preview with context information
+    applyColorsToPreview(scaleToUse, previewContext);
+    
+    // Update preview algorithm indicator
+    updatePreviewAlgorithmIndicator();
     
     // Also update lightbox preview if it's open
     if (!domElements.previewLightbox.classList.contains('hidden')) {
@@ -1487,10 +1750,33 @@ function updateLivePreview() {
 }
 
 /**
+ * Update preview algorithm indicator
+ */
+function updatePreviewAlgorithmIndicator() {
+    const indicator = document.querySelector('.preview-algorithm-indicator');
+    if (!indicator) return;
+    
+    if (AppState.useEnhancedAlgorithms) {
+        const algorithmText = [
+            AppState.interpolationMethod.toUpperCase(),
+            AppState.usePerceptualUniformity ? 'Perceptual' : null,
+            AppState.enableBezierInterpolation ? 'Bezier' : null
+        ].filter(Boolean).join(' + ');
+        
+        indicator.textContent = `Enhanced: ${algorithmText}`;
+        indicator.classList.add('enhanced-active');
+    } else {
+        indicator.textContent = 'Standard HSL';
+        indicator.classList.remove('enhanced-active');
+    }
+}
+
+/**
  * Apply color scale to live preview components
  * @param {Array} colorScale - Color scale to apply
+ * @param {string} context - Preview context (light-original, dark-original, etc.)
  */
-function applyColorsToPreview(colorScale) {
+function applyColorsToPreview(colorScale, context = 'light-original') {
     // Find key colors from the scale
     const colors = getPreviewColors(colorScale);
     
@@ -2133,6 +2419,13 @@ function generateInitialScale() {
         domElements.stickyAccessibilitySelect.value = AppState.accessibilityMode;
     }
     
+    // Initialize view mode body class
+    if (AppState.isMinimalViewActive) {
+        document.body.classList.add('minimal-view');
+    } else {
+        document.body.classList.remove('minimal-view');
+    }
+    
     // Initialize view mode toggle states
     updateViewModeToggles();
     
@@ -2363,4 +2656,255 @@ function debounce(func, wait) {
         clearTimeout(timeout);
         timeout = setTimeout(later, wait);
     };
+}
+
+/**
+ * Enhanced Algorithm Event Handlers
+ */
+
+/**
+ * Handle enhanced algorithms toggle (new toggle-track style)
+ */
+function handleEnhancedAlgorithmsToggle() {
+    AppState.useEnhancedAlgorithms = !AppState.useEnhancedAlgorithms;
+    
+    // Update toggle visual state
+    const toggleTrack = domElements.enhancedAlgorithmsToggle;
+    if (AppState.useEnhancedAlgorithms) {
+        document.body.classList.add('enhanced-algorithms-active');
+        toggleTrack.setAttribute('aria-pressed', 'true');
+    } else {
+        document.body.classList.remove('enhanced-algorithms-active');
+        toggleTrack.setAttribute('aria-pressed', 'false');
+    }
+    
+    // Show/hide enhanced algorithm controls with animation
+    const algorithmControls = document.querySelector('.enhanced-algorithm-controls');
+    if (algorithmControls) {
+        // Ensure transitions are set
+        algorithmControls.style.transition = 'max-height 0.3s ease-out, opacity 0.3s ease-out';
+        if (AppState.useEnhancedAlgorithms) {
+            algorithmControls.classList.remove('hidden');
+            algorithmControls.classList.remove('disabled');
+            // Force show with styles if CSS fails
+            algorithmControls.style.maxHeight = '300px';
+            algorithmControls.style.opacity = '1';
+        } else {
+            algorithmControls.classList.add('hidden');
+            algorithmControls.classList.add('disabled');
+            // Force hide with styles if CSS fails
+            algorithmControls.style.maxHeight = '0';
+            algorithmControls.style.opacity = '0';
+        }
+    }
+    
+    generateAndUpdateColorScale();
+}
+
+/**
+ * Handle enhanced algorithm toggle (legacy checkbox)
+ */
+function handleEnhancedAlgorithmToggle(event) {
+    AppState.useEnhancedAlgorithms = event.target.checked;
+    
+    // Show/hide enhanced algorithm controls
+    const algorithmControls = document.querySelector('.algorithm-controls');
+    if (algorithmControls) {
+        if (AppState.useEnhancedAlgorithms) {
+            algorithmControls.classList.remove('disabled');
+        } else {
+            algorithmControls.classList.add('disabled');
+        }
+    }
+    
+    generateAndUpdateColorScale();
+}
+
+/**
+ * Handle perceptual uniformity toggle
+ */
+function handlePerceptualUniformityToggle(event) {
+    AppState.usePerceptualUniformity = event.target.checked;
+    generateAndUpdateColorScale();
+}
+
+/**
+ * Handle interpolation method change
+ */
+function handleInterpolationMethodChange(event) {
+    AppState.interpolationMethod = event.target.value;
+    generateAndUpdateColorScale();
+}
+
+
+/**
+ * Handle Bezier interpolation toggle
+ */
+function handleBezierInterpolationToggle(event) {
+    AppState.enableBezierInterpolation = event.target.checked;
+    generateAndUpdateColorScale();
+}
+
+/**
+ * Handle accordion toggle
+ */
+function handleAccordionToggle() {
+    const header = domElements.advancedSettingsHeader;
+    const content = domElements.advancedSettingsContent;
+    
+    if (!header || !content) return;
+    
+    const isExpanded = header.getAttribute('aria-expanded') === 'true';
+    const newState = !isExpanded;
+    
+    // Update ARIA attributes
+    header.setAttribute('aria-expanded', newState.toString());
+    content.setAttribute('aria-hidden', (!newState).toString());
+    
+    // Add/remove animation class for smooth transition
+    if (newState) {
+        content.style.display = 'block';
+        // Force reflow for smooth animation
+        content.offsetHeight;
+        content.setAttribute('aria-hidden', 'false');
+    } else {
+        content.setAttribute('aria-hidden', 'true');
+        // Wait for animation to complete before hiding
+        setTimeout(() => {
+            if (content.getAttribute('aria-hidden') === 'true') {
+                content.style.display = '';
+            }
+        }, 300);
+    }
+}
+
+/**
+ * Update quality metrics panel
+ */
+function updateQualityMetricsPanel() {
+    // Temporarily hidden - keep Quality Analysis hidden
+    if (!domElements.qualityMetricsPanel || !domElements.qualityMetricsContent) {
+        return;
+    }
+    
+    // Force hide Quality Analysis panel
+    domElements.qualityMetricsPanel.style.display = 'none';
+    return;
+    
+    // Original logic (disabled)
+    /*
+    if (!AppState.qualityMetrics || !AppState.useEnhancedAlgorithms) {
+        domElements.qualityMetricsPanel.style.display = 'none';
+        return;
+    }
+    
+    domElements.qualityMetricsPanel.style.display = 'block';
+    
+    const metrics = AppState.qualityMetrics;
+    const html = `
+        <div class="quality-metrics-grid">
+            <div class="metric-item">
+                <div class="metric-label">Perceptual Uniformity</div>
+                <div class="metric-value ${getMetricClass(metrics.perceptualUniformity)}">${formatMetricValue(metrics.perceptualUniformity)}</div>
+            </div>
+            <div class="metric-item">
+                <div class="metric-label">Color Harmony</div>
+                <div class="metric-value ${getMetricClass(metrics.colorHarmony)}">${formatMetricValue(metrics.colorHarmony)}</div>
+            </div>
+            <div class="metric-item">
+                <div class="metric-label">Smoothness</div>
+                <div class="metric-value ${getMetricClass(metrics.smoothness)}">${formatMetricValue(metrics.smoothness)}</div>
+            </div>
+        </div>
+        <div class="quality-details">
+            <div class="detail-item">
+                <span class="detail-label">Algorithm:</span>
+                <span class="detail-value">${metrics.algorithm}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Interpolation:</span>
+                <span class="detail-value">${AppState.interpolationMethod.toUpperCase()}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Generation Time:</span>
+                <span class="detail-value">${Math.round(AppState.lastGenerationTime)}ms</span>
+            </div>
+        </div>
+    `;
+    
+    domElements.qualityMetricsContent.innerHTML = html;
+    */
+}
+
+/**
+ * Get CSS class for metric value based on quality
+ */
+function getMetricClass(value) {
+    if (value >= 0.8) return 'metric-excellent';
+    if (value >= 0.6) return 'metric-good';
+    if (value >= 0.4) return 'metric-fair';
+    return 'metric-poor';
+}
+
+/**
+ * Format metric value for display
+ */
+function formatMetricValue(value) {
+    return Math.round(value * 100) + '%';
+}
+
+/**
+ * Initialize enhanced algorithm controls
+ */
+function initializeEnhancedControls() {
+    // Set initial toggle states for toggles
+    if (domElements.enhancedAlgorithmsToggle) {
+        if (AppState.useEnhancedAlgorithms) {
+            document.body.classList.add('enhanced-algorithms-active');
+            domElements.enhancedAlgorithmsToggle.setAttribute('aria-pressed', 'true');
+        } else {
+            document.body.classList.remove('enhanced-algorithms-active');
+            domElements.enhancedAlgorithmsToggle.setAttribute('aria-pressed', 'false');
+        }
+    }
+    
+    // Set initial state for sticky toggle too
+    if (domElements.stickyEnhancedAlgorithmsToggle) {
+        if (AppState.useEnhancedAlgorithms) {
+            domElements.stickyEnhancedAlgorithmsToggle.setAttribute('aria-pressed', 'true');
+        } else {
+            domElements.stickyEnhancedAlgorithmsToggle.setAttribute('aria-pressed', 'false');
+        }
+    }
+    
+    // Set initial toggle states for legacy toggle
+    if (domElements.enhancedAlgorithmToggle) {
+        domElements.enhancedAlgorithmToggle.checked = AppState.useEnhancedAlgorithms;
+    }
+    if (domElements.perceptualUniformityToggle) {
+        domElements.perceptualUniformityToggle.checked = AppState.usePerceptualUniformity;
+    }
+    if (domElements.interpolationMethodSelect) {
+        domElements.interpolationMethodSelect.value = AppState.interpolationMethod;
+    }
+    if (domElements.bezierInterpolationToggle) {
+        domElements.bezierInterpolationToggle.checked = AppState.enableBezierInterpolation;
+    }
+    
+    // Show/hide algorithm controls based on enhanced mode
+    const algorithmControls = document.querySelector('.enhanced-algorithm-controls');
+    if (algorithmControls) {
+        // Ensure clean state first
+        algorithmControls.classList.remove('hidden', 'disabled');
+        
+        if (AppState.useEnhancedAlgorithms) {
+            // Already shown - no action needed
+        } else {
+            // Hide with delay to allow for initial render
+            setTimeout(() => {
+                algorithmControls.classList.add('hidden');
+                algorithmControls.classList.add('disabled');
+            }, 100);
+        }
+    }
 }
