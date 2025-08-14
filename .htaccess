@@ -11,7 +11,11 @@ Header always set X-Content-Type-Options "nosniff"
 Header always set X-XSS-Protection "1; mode=block"
 
 # Permissions Policy (restrict sensitive features)
-Header always set Permissions-Policy "geolocation=(), microphone=(), camera=(), payment=(), usb=()"
+# Note: Remove this line if you get 'browsing-topics' errors
+# Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+
+# Alternative: Use Feature-Policy for older browser support
+Header always set Feature-Policy "geolocation 'none'; microphone 'none'; camera 'none'"
 
 # Strict Transport Security (if using HTTPS)
 # Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
