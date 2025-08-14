@@ -1,5 +1,5 @@
+<img width="1200" height="675" alt="Color Scale Generator" src="https://github.com/user-attachments/assets/e3ead397-d4c4-46f6-8657-da8b5f20987d" />
 
-![Uploading Color Scale Generator - Large.gif…]()
 
 # 🎨 Color Scale Generator
 
