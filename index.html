@@ -71,6 +71,7 @@
     <link rel="stylesheet" href="css/enhanced-styles.css">
     <link rel="stylesheet" href="css/light-theme.css">
     <link rel="stylesheet" href="css/dark-theme.css">
+    <link rel="stylesheet" href="css/accessibility-improvements.css">
     
     <!-- Preload critical resources -->
     <link rel="preconnect" href="https://api.color.pizza">
@@ -81,6 +82,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body class="light-theme" id="top">
+    <!-- Skip to main content link for accessibility -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    
     <!-- Header -->
     <header class="app-header" id="appHeader">
         <div class="header-content">
@@ -200,7 +204,7 @@
     </header>
 
     <!-- Main Application -->
-    <main class="app-main">
+    <main class="app-main" id="main-content">
         
         <!-- Input Section -->
         <section class="input-section">
@@ -213,13 +217,14 @@
                 <div class="combined-controls-row">
                     <!-- Color Picker Group -->
                     <div class="color-picker-container">
-                        <label class="config-label">Select Color (Level 400):</label>
+                        <label class="config-label" for="colorPicker">Select Color (Level 400):</label>
                         <div class="color-picker-group">
                         <input 
                             type="color" 
                             id="colorPicker" 
                             class="color-picker"
                             value="#3791c6"
+                            aria-label="Color picker for base color"
                         >
                         <input 
                             type="text" 
@@ -229,6 +234,7 @@
                             value="#3791c6"
                             maxlength="7"
                             autocomplete="off"
+                            aria-label="Hex color input field"
                         >
                         <button 
                             type="button" 
@@ -433,7 +439,7 @@
         <!-- Live Preview Section (temporarily hidden) -->
         <section class="live-preview-section hidden" id="livePreviewSection">
             <div class="preview-container">
-                <h3 class="preview-title">Live Component Preview</h3>
+                <h2 class="preview-title">Live Component Preview</h2>
                 <p class="preview-subtitle">See how your colors work in real UI components</p>
                 
                 <div class="preview-grid">
@@ -537,7 +543,7 @@
         <!-- Export Section -->
         <section class="export-section hidden" id="exportSection">
             <div class="export-container">
-                <h3 class="export-title">Export Your Color Scale</h3>
+                <h2 class="export-title">Export Your Color Scale</h2>
                 
                 <div class="export-options">
                     <label for="exportFormat" class="export-label">Export Format:</label>
@@ -591,16 +597,16 @@
         <!-- How It Works Section -->
         <section class="export-section" id="how-it-works">
             <div class="export-container">
-                <h3 class="export-title">How the Color Scale Generator Works</h3>
+                <h2 class="export-title">How the Color Scale Generator Works</h2>
                 
                 <div class="how-it-works-content">
                     <div class="base-color-section">
-                        <h4 class="features-subtitle">The Accessibility-First Foundation</h4>
+                        <h3 class="features-subtitle">The Accessibility-First Foundation</h3>
                         <p class="base-color-explanation">Your input color becomes <strong>Level 400</strong> - the <strong>accessible foundation</strong> of the entire scale.<br>This base color is validated against <strong>WCAG AA standards</strong> for both <strong>black and white text</strong>, ensuring <strong>perfect readability</strong>.<br>From this proven accessible anchor, the entire color scale is <strong>mathematically derived</strong> to maintain <strong>visual harmony</strong> while preserving <strong>accessibility relationships</strong>.</p>
                     </div>
                     
                     <div class="features-overview">
-                        <h4 class="features-subtitle">Core Features</h4>
+                        <h3 class="features-subtitle">Core Features</h3>
                         <div class="features-grid">
                             <div class="feature-block">
                                 <strong>
@@ -656,7 +662,7 @@
                     </div>
                     
                     <div class="technical-overview">
-                        <h4 class="features-subtitle">Technical Implementation</h4>
+                        <h3 class="features-subtitle">Technical Implementation</h3>
                         <div class="technical-grid">
                             <div class="technical-block">
                                 <strong>Color Science:</strong> Uses HSL color space with piecewise linear interpolation for natural color progression.
@@ -716,13 +722,16 @@
     <!-- Toast Notifications -->
     <div id="toastContainer" class="toast-container"></div>
     
+    <!-- ARIA live region for screen reader announcements -->
+    <div id="live-announcements" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+    
     <!-- Live Preview Lightbox -->
     <div class="preview-lightbox hidden" id="previewLightbox">
         <div class="lightbox-backdrop" id="lightboxBackdrop"></div>
         <div class="lightbox-content">
             <div class="lightbox-header">
                 <div class="lightbox-header-left">
-                    <h3 class="lightbox-title">Live Component Preview</h3>
+                    <h2 class="lightbox-title">Live Component Preview</h2>
                     <p class="lightbox-subtitle">See how your colors work in real UI components</p>
                 </div>
                 <div class="lightbox-header-right">

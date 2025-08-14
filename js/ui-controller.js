@@ -37,6 +37,31 @@ let domElements = {};
 let colorGenerationTimeout = null;
 
 /**
+ * Announce message to screen readers
+ */
+function announceToScreenReader(message, priority = 'polite') {
+    const liveRegion = document.getElementById('live-announcements');
+    if (liveRegion) {
+        liveRegion.setAttribute('aria-live', priority);
+        liveRegion.textContent = message;
+        
+        // Clear after announcement
+        setTimeout(() => {
+            liveRegion.textContent = '';
+        }, 1000);
+    }
+}
+
+/**
+ * Update toggle button ARIA state
+ */
+function updateToggleButtonAria(button, pressed) {
+    if (button && button.hasAttribute('aria-pressed')) {
+        button.setAttribute('aria-pressed', pressed.toString());
+    }
+}
+
+/**
  * Initialize UI Controller
  */
 function initializeUIController() {
@@ -616,6 +641,9 @@ function updateAccessibilityIndicator(activeInput) {
  */
 function handleThemeToggle() {
     AppState.isDarkModeActive = !AppState.isDarkModeActive;
+    
+    // Update ARIA state
+    updateToggleButtonAria(domElements.themeToggle, AppState.isDarkModeActive);
     
     const themeIcon = document.querySelector('.theme-icon');
     
@@ -2326,6 +2354,13 @@ function handleViewModeToggle(event) {
     
     AppState.isMinimalViewActive = !AppState.isMinimalViewActive;
     
+    // Update ARIA states for all view mode toggles
+    updateToggleButtonAria(domElements.viewModeToggle, AppState.isMinimalViewActive);
+    updateToggleButtonAria(domElements.stickyViewModeToggle, AppState.isMinimalViewActive);
+    
+    // Announce state change
+    announceToScreenReader(`${AppState.isMinimalViewActive ? 'Minimal' : 'Detailed'} view activated`);
+    
     if (AppState.isMinimalViewActive) {
         document.body.classList.add('minimal-view');
     } else {
@@ -2667,6 +2702,13 @@ function debounce(func, wait) {
  */
 function handleEnhancedAlgorithmsToggle() {
     AppState.useEnhancedAlgorithms = !AppState.useEnhancedAlgorithms;
+    
+    // Update ARIA states for all enhanced mode toggles
+    updateToggleButtonAria(domElements.enhancedAlgorithmsToggle, AppState.useEnhancedAlgorithms);
+    updateToggleButtonAria(domElements.stickyEnhancedAlgorithmsToggle, AppState.useEnhancedAlgorithms);
+    
+    // Announce state change
+    announceToScreenReader(`Enhanced mode ${AppState.useEnhancedAlgorithms ? 'enabled' : 'disabled'}`);
     
     // Update toggle visual state
     const toggleTrack = domElements.enhancedAlgorithmsToggle;
