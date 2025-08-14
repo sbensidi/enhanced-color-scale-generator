@@ -412,6 +412,7 @@ th {
 .segment-input:checked + .segment-label {
     color: #ffffff;
     background-color: var(--primary-color);
+    outline: none;
 }
 
 .dark-theme .segment-label {
@@ -422,6 +423,7 @@ th {
 .dark-theme .segment-input:checked + .segment-label {
     color: #ffffff;
     background-color: var(--primary-color);
+    outline: none;
 }
 
 /* Fix accessibility indicator colors */
@@ -450,15 +452,10 @@ th {
     color: #f9fafb;
 }
 
-/* Fix body text contrast */
+/* Fix body text contrast - use CSS variables */
 body {
-    color: #111827;
-    background-color: #ffffff;
-}
-
-.dark-theme body {
-    color: #f9fafb;
-    background-color: #111827;
+    color: var(--text-color);
+    background-color: var(--primary-bg);
 }
 
 /* Fix any remaining low contrast elements */

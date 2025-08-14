@@ -188,11 +188,11 @@
 
 /* Dark theme link styling */
 .dark-theme .footer-text a {
-    color: #60a5fa;
+    color: var(--primary-color);
 }
 
 .dark-theme .footer-text a:hover {
-    color: #93c5fd;
+    color: var(--primary-color-hover);
 }
 
 /* Dark theme accessibility badge */
