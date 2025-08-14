@@ -1950,13 +1950,15 @@ body.minimal-view .color-card-minimal {
 }
 
 .accessibility-indicator.accessible {
-    background: var(--success-color);
-    color: white;
+    background: #047857 !important;
+    color: #ffffff !important;
+    border: none !important;
 }
 
 .accessibility-indicator.not-accessible {
-    background: var(--error-color);
-    color: white;
+    background: #dc2626 !important;
+    color: #ffffff !important;
+    border: none !important;
 }
 
 .accessibility-indicator.dark-mode {

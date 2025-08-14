@@ -428,15 +428,17 @@ th {
 
 /* Fix accessibility indicator colors */
 .accessibility-indicator.not-accessible {
-    background-color: #dc2626;
-    color: #ffffff;
-    font-weight: 700;
+    background-color: #dc2626 !important;
+    color: #ffffff !important;
+    font-weight: 700 !important;
+    border: none !important;
 }
 
 .accessibility-indicator.accessible {
-    background-color: #059669;
-    color: #ffffff;
-    font-weight: 700;
+    background-color: #047857 !important;
+    color: #ffffff !important;
+    font-weight: 700 !important;
+    border: none !important;
 }
 
 /* Fix header contrast issues */
