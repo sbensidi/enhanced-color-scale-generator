@@ -219,7 +219,34 @@ function setupKeyboardShortcuts() {
         if (event.key === 'Escape') {
             closeAllOverlays();
         }
+        
+        // Space key: smooth scroll to palette grid (when not focused on interactive element)
+        if (event.key === ' ' && !isInteractiveElement(event.target)) {
+            event.preventDefault();
+            const paletteGrid = document.getElementById('paletteGrid');
+            if (paletteGrid) {
+                paletteGrid.scrollIntoView({ 
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        }
     });
+}
+
+/**
+ * Check if element is interactive (should not be overridden by space key)
+ */
+function isInteractiveElement(element) {
+    const interactiveTags = ['button', 'input', 'select', 'textarea', 'a'];
+    const interactiveRoles = ['button', 'link', 'checkbox', 'radio', 'tab'];
+    
+    return (
+        interactiveTags.includes(element.tagName.toLowerCase()) ||
+        element.hasAttribute('tabindex') ||
+        interactiveRoles.includes(element.getAttribute('role')) ||
+        element.contentEditable === 'true'
+    );
 }
 
 /**
