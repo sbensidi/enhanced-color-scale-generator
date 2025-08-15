@@ -52,6 +52,15 @@
     color: #fff !important;
 }
 
+/* Force skip-link color - override any other link styles */
+a.skip-link,
+a.skip-link:visited,
+a.skip-link:hover,
+a.skip-link:active,
+a.skip-link:focus {
+    color: #fff !important;
+}
+
 /* Keyboard navigation indicator */
 .keyboard-navigation *:focus {
     outline: 2px solid var(--primary-color);
