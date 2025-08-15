@@ -154,10 +154,32 @@ body.enhanced-algorithms-active .enhanced-algorithms-toggle .toggle-thumb {
     cursor: pointer;
     user-select: none;
     gap: 0.75rem;
+    position: relative;
 }
 
 .toggle-container input[type="checkbox"] {
-    display: none;
+    position: absolute;
+    opacity: 0;
+    width: 32px;
+    height: 18px;
+    margin: 0;
+    cursor: pointer;
+}
+
+.toggle-container input[type="checkbox"]:focus {
+    outline: none;
+}
+
+.toggle-container input[type="checkbox"]:focus + .toggle-track {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+}
+
+.toggle-container input[type="checkbox"]:focus-visible + .toggle-track {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
 }
 
 .toggle-track {
@@ -187,7 +209,8 @@ body.enhanced-algorithms-active .enhanced-algorithms-toggle .toggle-thumb {
 }
 
 .toggle-container input[type="checkbox"]:checked + .toggle-track {
-    background: #3b82f6;
+    background: var(--primary-color);
+    border-color: var(--primary-color);
 }
 
 .toggle-container input[type="checkbox"]:checked + .toggle-track .toggle-thumb {
