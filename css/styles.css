@@ -1665,7 +1665,20 @@ body.minimal-view .color-card-minimal {
 }
 
 .segment-input {
-    display: none;
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    cursor: pointer;
+    clip: rect(0, 0, 0, 0);
+    overflow: hidden;
+}
+
+.segment-input:focus {
+    outline: none;
 }
 
 .segment-label {
@@ -1703,6 +1716,14 @@ body.minimal-view .color-card-minimal {
     outline: 2px solid var(--primary-color);
     outline-offset: 2px;
     box-shadow: 0 0 0 4px rgba(var(--primary-color-rgb), 0.2);
+    z-index: 3;
+    position: relative;
+}
+
+.segment-input:focus-visible + .segment-label {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px rgba(var(--primary-color-rgb), 0.3);
 }
 
 .segment-indicator {
