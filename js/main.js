@@ -264,33 +264,7 @@ function setupAccessibilityFeatures() {
         document.body.classList.remove('keyboard-navigation');
     });
     
-    // Setup skip links
-    const skipLink = document.createElement('a');
-    skipLink.href = '#paletteGrid';
-    skipLink.textContent = 'Skip to color palette';
-    skipLink.className = 'skip-link';
-    skipLink.style.cssText = `
-        position: absolute;
-        top: -40px;
-        left: 6px;
-        background: #000;
-        color: #fff;
-        padding: 8px 16px;
-        text-decoration: none;
-        border-radius: 4px;
-        z-index: 1000;
-        transition: top 0.3s;
-    `;
-    
-    skipLink.addEventListener('focus', () => {
-        skipLink.style.top = '10px';
-    });
-    
-    skipLink.addEventListener('blur', () => {
-        skipLink.style.top = '-40px';
-    });
-    
-    document.body.insertBefore(skipLink, document.body.firstChild);
+    // Skip-link already exists in HTML, no need to create another one
     
     // Setup ARIA live regions for screen readers
     const liveRegion = document.createElement('div');
