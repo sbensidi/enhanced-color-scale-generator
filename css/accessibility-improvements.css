@@ -419,8 +419,7 @@ th {
 .segment-input:focus + .segment-label,
 .segment-input:focus-visible + .segment-label {
     outline: 2px solid var(--primary-color) !important;
-    outline-offset: 2px !important;
-    box-shadow: 0 0 0 4px rgba(var(--primary-color-rgb), 0.3) !important;
+    outline-offset: 4px !important;
 }
 
 .dark-theme .segment-label {
@@ -438,8 +437,7 @@ th {
 .dark-theme .segment-input:focus + .segment-label,
 .dark-theme .segment-input:focus-visible + .segment-label {
     outline: 2px solid var(--primary-color) !important;
-    outline-offset: 2px !important;
-    box-shadow: 0 0 0 4px rgba(var(--primary-color-rgb), 0.4) !important;
+    outline-offset: 4px !important;
 }
 
 /* Fix accessibility indicator colors */

@@ -1713,16 +1713,14 @@ body.minimal-view .color-card-minimal {
 /* Keyboard navigation for segmented controls */
 .segment-input:focus + .segment-label {
     outline: 2px solid var(--primary-color) !important;
-    outline-offset: 2px !important;
-    box-shadow: 0 0 0 4px rgba(var(--primary-color-rgb), 0.2) !important;
+    outline-offset: 4px !important;
     z-index: 10 !important;
     position: relative !important;
 }
 
 .segment-input:focus-visible + .segment-label {
     outline: 2px solid var(--primary-color) !important;
-    outline-offset: 2px !important;
-    box-shadow: 0 0 0 4px rgba(var(--primary-color-rgb), 0.3) !important;
+    outline-offset: 4px !important;
     z-index: 10 !important;
 }
 
