@@ -63,14 +63,14 @@ class Analytics {
             // Load Google Analytics 4
             const script = document.createElement('script');
             script.async = true;
-            script.src = 'https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID';
+            script.src = 'https://www.googletagmanager.com/gtag/js?id=G-0VY3JCRCX8';
             document.head.appendChild(script);
 
             // Initialize gtag
             window.dataLayer = window.dataLayer || [];
             window.gtag = function() { dataLayer.push(arguments); };
             gtag('js', new Date());
-            gtag('config', 'GA_MEASUREMENT_ID', {
+            gtag('config', 'G-0VY3JCRCX8', {
                 anonymize_ip: true,
                 allow_google_signals: false,
                 allow_ad_personalization_signals: false
