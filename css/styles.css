@@ -1694,7 +1694,15 @@ body.minimal-view .color-card-minimal {
 .segment-input:checked + .segment-label {
     color: white;
     font-weight: 600;
+    background-color: var(--primary-color);
     /* left: 1px; */
+}
+
+/* Keyboard navigation for segmented controls */
+.segment-input:focus + .segment-label {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px rgba(var(--primary-color-rgb), 0.2);
 }
 
 .segment-indicator {
@@ -2899,7 +2907,7 @@ body.minimal-view .color-card-minimal {
 }
 
 .lightbox-content.lightbox-dark-mode-active .preview-button:hover {
-    background: var(--preview-primary-hover, #3b82f6);
+    background: var(--preview-primary-hover, var(--primary-color));
 }
 
 .lightbox-content.lightbox-dark-mode-active .preview-button-secondary:hover {
@@ -3031,7 +3039,7 @@ body.minimal-view .color-card-minimal {
 
 /* Additional dark mode styling for lightbox content elements */
 .lightbox-content.lightbox-dark-mode-active .preview-button {
-    background: var(--preview-primary, #3b82f6);
+    background: var(--preview-primary, var(--primary-color));
     color: white;
     border: none;
 }
