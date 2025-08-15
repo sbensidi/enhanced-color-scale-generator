@@ -220,15 +220,23 @@ function setupKeyboardShortcuts() {
             closeAllOverlays();
         }
         
-        // Space key: scroll to main content (same target as skip-link)
+        // Space key: scroll to main content only if above it, otherwise allow normal scrolling
         if (event.key === ' ' && !isInteractiveElement(event.target)) {
-            event.preventDefault();
             const mainContent = document.getElementById('main-content');
             if (mainContent) {
-                mainContent.scrollIntoView({ 
-                    behavior: 'smooth',
-                    block: 'start'
-                });
+                const mainContentRect = mainContent.getBoundingClientRect();
+                const scrollY = window.pageYOffset || document.documentElement.scrollTop;
+                const mainContentTop = mainContentRect.top + scrollY;
+                
+                // Only intercept space if we're above the main content
+                if (scrollY < mainContentTop - 100) { // 100px buffer
+                    event.preventDefault();
+                    mainContent.scrollIntoView({ 
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+                // Otherwise, let browser handle space key normally for continued scrolling
             }
         }
     });
