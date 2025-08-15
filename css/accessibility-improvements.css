@@ -415,6 +415,14 @@ th {
     outline: none;
 }
 
+/* Override outline:none for focus states */
+.segment-input:focus + .segment-label,
+.segment-input:focus-visible + .segment-label {
+    outline: 2px solid var(--primary-color) !important;
+    outline-offset: 2px !important;
+    box-shadow: 0 0 0 4px rgba(var(--primary-color-rgb), 0.3) !important;
+}
+
 .dark-theme .segment-label {
     color: #f9fafb;
 }
@@ -424,6 +432,14 @@ th {
     color: #ffffff;
     background-color: var(--primary-color);
     outline: none;
+}
+
+/* Dark theme focus states */
+.dark-theme .segment-input:focus + .segment-label,
+.dark-theme .segment-input:focus-visible + .segment-label {
+    outline: 2px solid var(--primary-color) !important;
+    outline-offset: 2px !important;
+    box-shadow: 0 0 0 4px rgba(var(--primary-color-rgb), 0.4) !important;
 }
 
 /* Fix accessibility indicator colors */
