@@ -219,9 +219,35 @@ function setupKeyboardShortcuts() {
         if (event.key === 'Escape') {
             closeAllOverlays();
         }
+        
+        // Space key: scroll to main content (same target as skip-link)
+        if (event.key === ' ' && !isInteractiveElement(event.target)) {
+            event.preventDefault();
+            const mainContent = document.getElementById('main-content');
+            if (mainContent) {
+                mainContent.scrollIntoView({ 
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        }
     });
 }
 
+/**
+ * Check if element is interactive (should preserve default space key behavior)
+ */
+function isInteractiveElement(element) {
+    const interactiveTags = ['button', 'input', 'select', 'textarea', 'a'];
+    const interactiveRoles = ['button', 'link', 'checkbox', 'radio', 'tab'];
+    
+    return (
+        interactiveTags.includes(element.tagName.toLowerCase()) ||
+        element.hasAttribute('tabindex') ||
+        interactiveRoles.includes(element.getAttribute('role')) ||
+        element.contentEditable === 'true'
+    );
+}
 
 /**
  * Setup accessibility features
