@@ -220,42 +220,9 @@ function setupKeyboardShortcuts() {
             closeAllOverlays();
         }
         
-        // Space key: scroll to main content only if above it, otherwise allow normal scrolling
-        if (event.key === ' ' && !isInteractiveElement(event.target)) {
-            const mainContent = document.getElementById('main-content');
-            if (mainContent) {
-                const mainContentRect = mainContent.getBoundingClientRect();
-                const scrollY = window.pageYOffset || document.documentElement.scrollTop;
-                const mainContentTop = mainContentRect.top + scrollY;
-                
-                // Only intercept space if we're above the main content
-                if (scrollY < mainContentTop - 100) { // 100px buffer
-                    event.preventDefault();
-                    mainContent.scrollIntoView({ 
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-                // Otherwise, let browser handle space key normally for continued scrolling
-            }
-        }
     });
 }
 
-/**
- * Check if element is interactive (should preserve default space key behavior)
- */
-function isInteractiveElement(element) {
-    const interactiveTags = ['button', 'input', 'select', 'textarea', 'a'];
-    const interactiveRoles = ['button', 'link', 'checkbox', 'radio', 'tab'];
-    
-    return (
-        interactiveTags.includes(element.tagName.toLowerCase()) ||
-        element.hasAttribute('tabindex') ||
-        interactiveRoles.includes(element.getAttribute('role')) ||
-        element.contentEditable === 'true'
-    );
-}
 
 /**
  * Setup accessibility features
