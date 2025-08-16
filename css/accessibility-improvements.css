@@ -397,19 +397,27 @@ th {
 
 /* Improve toast notifications contrast */
 .toast-container .toast {
-    background-color: #1f2937;
-    color: #ffffff;
-    border: 1px solid #374151;
+    background-color: #ffffff;
+    color: #111827;
+    border: 1px solid #d1d5db;
 }
 
 .toast-container .toast.success {
-    background-color: #065f46;
+    background-color: #ffffff;
+    color: #111827;
     border-color: #047857;
 }
 
 .toast-container .toast.error {
-    background-color: #991b1b;
+    background-color: #ffffff;
+    color: #111827;
     border-color: #dc2626;
+}
+
+.toast-container .toast.warning {
+    background-color: #ffffff;
+    color: #111827;
+    border-color: #f59e0b;
 }
 
 /* Ensure proper text contrast in all states */

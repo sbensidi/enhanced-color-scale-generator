@@ -3421,24 +3421,27 @@ body.minimal-view .color-card-minimal {
 /* Toast Notifications */
 .toast-container {
     position: fixed;
-    top: 2rem;
-    right: 2rem;
+    top: 1.5rem;
+    right: 1.5rem;
     z-index: 1000;
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 0.75rem;
 }
 
 .toast {
     background: var(--card-bg);
     border: 1px solid var(--border-color);
     border-radius: 12px;
-    padding: 1rem 1.5rem;
+    padding: 0.875rem 1.25rem;
     box-shadow: var(--shadow-lg);
     transform: translateX(400px);
     opacity: 0;
     transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    max-width: 350px;
+    max-width: 320px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    backdrop-filter: blur(10px);
 }
 
 .toast.show {
@@ -3447,14 +3450,17 @@ body.minimal-view .color-card-minimal {
 }
 
 .toast.success {
+    background: white;
     border-left: 4px solid var(--success-color);
 }
 
 .toast.error {
+    background: white;
     border-left: 4px solid var(--error-color);
 }
 
 .toast.warning {
+    background: white;
     border-left: 4px solid var(--warning-color);
 }
 
