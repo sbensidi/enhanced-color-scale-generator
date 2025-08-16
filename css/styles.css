@@ -688,7 +688,7 @@ body {
     display: flex;
     gap: 1.5rem;
     align-items: flex-end;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     min-height: 44px; /* Match segmented control height */
     margin-bottom: 1rem;
 }
