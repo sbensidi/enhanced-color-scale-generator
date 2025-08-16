@@ -138,12 +138,12 @@ textarea:focus-visible {
     color: #000000;
 }
 
-/* Ensure proper contrast for all text elements */
+/* Ensure proper contrast for all text elements - use CSS variables */
 .app-subtitle,
 .config-label,
 .toggle-label,
 .sticky-control-label {
-    color: #111827;
+    color: var(--label-color);
     font-weight: 600;
 }
 
@@ -151,19 +151,19 @@ textarea:focus-visible {
 .dark-theme .config-label,
 .dark-theme .toggle-label,
 .dark-theme .sticky-control-label {
-    color: #f9fafb;
+    color: var(--label-color);
 }
 
-/* Better contrast for muted text */
+/* Better contrast for muted text - use CSS variables */
 .preview-muted,
 .footer-text {
-    color: #4a5568;
+    color: var(--preview-muted, var(--subtitle-color));
     font-weight: 400;
 }
 
 .dark-theme .preview-muted,
 .dark-theme .footer-text {
-    color: #a0aec0;
+    color: var(--preview-muted, var(--subtitle-color));
 }
 
 /* Enhanced contrast for links */
@@ -173,7 +173,7 @@ a:not(.btn):not(.button):not(.buy-coffee-btn):not(.floating-coffee-btn):not(.ski
 }
 
 .dark-theme a:not(.btn):not(.button):not(.buy-coffee-btn):not(.floating-coffee-btn):not(.skip-link) {
-    color: #93c5fd;
+    color: var(--primary-color);
 }
 
 /* Specific fix for learn-more-link */
@@ -183,7 +183,7 @@ a:not(.btn):not(.button):not(.buy-coffee-btn):not(.floating-coffee-btn):not(.ski
 }
 
 .dark-theme .learn-more-link {
-    color: #93c5fd !important;
+    color: var(--primary-color) !important;
 }
 
 /* Improve button contrast */
@@ -353,35 +353,35 @@ th {
     display: none !important;
 }
 
-/* Additional contrast improvements */
+/* Additional contrast improvements - use CSS variables */
 .sticky-control-label,
 .export-label,
 .control-label {
-    color: #111827;
+    color: var(--label-color);
     font-weight: 600;
 }
 
 .dark-theme .sticky-control-label,
 .dark-theme .export-label,
 .dark-theme .control-label {
-    color: #f9fafb;
+    color: var(--label-color);
 }
 
-/* Improve select dropdown contrast */
+/* Improve select dropdown contrast - use CSS variables */
 .sticky-scale-select,
 .export-select,
 .algorithm-select {
-    background-color: #ffffff;
-    border: 2px solid #d1d5db;
-    color: #374151;
+    background-color: var(--input-bg);
+    border: 2px solid var(--input-border);
+    color: var(--text-color);
 }
 
 .dark-theme .sticky-scale-select,
 .dark-theme .export-select,
 .dark-theme .algorithm-select {
-    background-color: #1f2937;
-    border-color: #4b5563;
-    color: #f9fafb;
+    background-color: var(--input-bg);
+    border-color: var(--input-border);
+    color: var(--text-color);
 }
 
 /* Enhanced focus indicators */
@@ -420,9 +420,9 @@ th {
     border-color: #f59e0b;
 }
 
-/* Ensure proper text contrast in all states */
+/* Ensure proper text contrast in all states - use CSS variables */
 .segment-label {
-    color: #111827;
+    color: var(--label-color);
     font-weight: 600;
 }
 
@@ -441,7 +441,7 @@ th {
 }
 
 .dark-theme .segment-label {
-    color: #f9fafb;
+    color: var(--label-color);
 }
 
 .dark-theme .segment-label.active,
@@ -473,17 +473,17 @@ th {
     border: none !important;
 }
 
-/* Fix header contrast issues */
+/* Fix header contrast issues - use CSS variables */
 .app-header,
 .header#appHeader {
-    background-color: #ffffff;
-    color: #111827;
+    background-color: var(--header-bg);
+    color: var(--title-color);
 }
 
 .dark-theme .app-header,
 .dark-theme .header#appHeader {
-    background-color: #111827;
-    color: #f9fafb;
+    background-color: var(--header-bg);
+    color: var(--title-color);
 }
 
 /* Fix body text contrast - use CSS variables */
@@ -506,16 +506,16 @@ body {
 .toggle-label,
 .accessibility-indicator,
 .footer-text,
-.preview-muted {
+.preview-muted-font-size {
     font-size: max(0.75rem, 12px);
 }
 
-/* Fix any remaining low contrast elements */
+/* Fix any remaining low contrast elements - use CSS variables */
 .base-color-explanation,
 .explanation-text,
 .feature-block p,
 .technical-block {
-    color: #374151;
+    color: var(--text-color);
     font-weight: 500;
 }
 
@@ -523,5 +523,5 @@ body {
 .dark-theme .explanation-text,
 .dark-theme .feature-block p,
 .dark-theme .technical-block {
-    color: #d1d5db;
+    color: var(--text-color);
 }
