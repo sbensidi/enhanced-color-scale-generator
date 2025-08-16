@@ -27,7 +27,7 @@
 
 /* Focus indicators for better keyboard navigation */
 *:focus {
-    outline: 2px solid var(--primary-color);
+    outline: 2px solid var(--focus-color, var(--preview-primary, var(--primary-color)));
     outline-offset: 2px;
 }
 
@@ -63,7 +63,7 @@ a.skip-link:focus {
 
 /* Keyboard navigation indicator */
 .keyboard-navigation *:focus {
-    outline: 2px solid var(--primary-color);
+    outline: 2px solid var(--focus-color, var(--preview-primary, var(--primary-color)));
     outline-offset: 2px;
 }
 
@@ -71,18 +71,18 @@ a.skip-link:focus {
 button:focus-visible,
 .btn:focus-visible,
 .toggle-track:focus-visible {
-    outline: 2px solid var(--primary-color);
+    outline: 2px solid var(--focus-color, var(--preview-primary, var(--primary-color)));
     outline-offset: 2px;
-    box-shadow: 0 0 0 4px var(--primary-color-alpha);
+    box-shadow: 0 0 0 4px var(--focus-ring-color, var(--preview-primary-alpha, var(--primary-color-alpha)));
 }
 
 /* Input focus improvements */
 input:focus-visible,
 select:focus-visible,
 textarea:focus-visible {
-    outline: 2px solid var(--primary-color);
+    outline: 2px solid var(--focus-color, var(--preview-primary, var(--primary-color)));
     outline-offset: 1px;
-    border-color: var(--primary-color);
+    border-color: var(--focus-color, var(--preview-primary, var(--primary-color)));
 }
 
 /* Toggle switches - better ARIA support */
@@ -425,7 +425,7 @@ th {
 /* Override outline:none for focus states */
 .segment-input:focus + .segment-label,
 .segment-input:focus-visible + .segment-label {
-    outline: 2px solid var(--primary-color) !important;
+    outline: 2px solid var(--focus-color, var(--preview-primary, var(--primary-color))) !important;
     outline-offset: 4px !important;
 }
 
@@ -443,7 +443,7 @@ th {
 /* Dark theme focus states */
 .dark-theme .segment-input:focus + .segment-label,
 .dark-theme .segment-input:focus-visible + .segment-label {
-    outline: 2px solid var(--primary-color) !important;
+    outline: 2px solid var(--focus-color, var(--preview-primary, var(--primary-color))) !important;
     outline-offset: 4px !important;
 }
 
