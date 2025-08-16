@@ -73,9 +73,10 @@
     --preview-card-text: #1f2937;
     --preview-nav-bg: #ffffff;
     --preview-nav-border: #e5e7eb;
-    --preview-nav-link: #1f2937;
+    --preview-nav-link: #1d4ed8;
     --preview-nav-link-hover: #1d4ed8;
     --preview-nav-link-hover-bg: rgba(29, 78, 216, 0.05);
+    --nav-active-text: white;
 }
 
 /* Light Theme Specific Styles */

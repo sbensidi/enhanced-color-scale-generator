@@ -2878,7 +2878,7 @@ body.minimal-view .color-card-minimal {
 
 .nav-link {
     padding: 0.5rem 1rem;
-    color: var(--preview-nav-link, var(--text-color));
+    color: var(--preview-primary, var(--primary-color));
     text-decoration: none;
     border-radius: 6px;
     transition: all 0.2s ease;
@@ -2892,7 +2892,7 @@ body.minimal-view .color-card-minimal {
 
 .nav-link.active {
     background: var(--preview-primary, var(--primary-color));
-    color: white;
+    color: var(--nav-active-text, white);
 }
 
 /* Preview Controls */

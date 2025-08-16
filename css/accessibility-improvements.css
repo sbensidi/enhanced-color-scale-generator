@@ -166,13 +166,13 @@ textarea:focus-visible {
     color: var(--preview-muted, var(--subtitle-color));
 }
 
-/* Enhanced contrast for links */
-a:not(.btn):not(.button):not(.buy-coffee-btn):not(.floating-coffee-btn):not(.skip-link) {
+/* Enhanced contrast for links - allow preview links to use their own colors */
+a:not(.btn):not(.button):not(.buy-coffee-btn):not(.floating-coffee-btn):not(.skip-link):not(.preview-link):not(.nav-link) {
     color: var(--primary-color);
     font-weight: 600;
 }
 
-.dark-theme a:not(.btn):not(.button):not(.buy-coffee-btn):not(.floating-coffee-btn):not(.skip-link) {
+.dark-theme a:not(.btn):not(.button):not(.buy-coffee-btn):not(.floating-coffee-btn):not(.skip-link):not(.preview-link):not(.nav-link) {
     color: var(--primary-color);
 }
 
@@ -243,14 +243,14 @@ h6 { font-size: 0.875rem; }
     display: block;
 }
 
-/* Better link styling */
-a:not(.btn):not(.button):not(.buy-coffee-btn):not(.floating-coffee-btn):not(.skip-link) {
+/* Better link styling - exclude preview and nav links */
+a:not(.btn):not(.button):not(.buy-coffee-btn):not(.floating-coffee-btn):not(.skip-link):not(.preview-link):not(.nav-link) {
     color: var(--primary-color);
     text-decoration-thickness: 1px;
     text-underline-offset: 2px;
 }
 
-a:not(.btn):not(.button):not(.buy-coffee-btn):not(.floating-coffee-btn):not(.skip-link):hover {
+a:not(.btn):not(.button):not(.buy-coffee-btn):not(.floating-coffee-btn):not(.skip-link):not(.preview-link):not(.nav-link):hover {
     text-decoration-thickness: 2px;
 }
 

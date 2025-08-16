@@ -67,15 +67,16 @@
     --preview-heading: #f1f5f9;
     --preview-text: #e2e8f0;
     --preview-muted: #94a3b8;
-    --preview-primary: #60a5fa;
+    --preview-primary: #93c5fd;
     --preview-card-bg: #1e293b;
     --preview-card-border: #334155;
     --preview-card-text: #e2e8f0;
     --preview-nav-bg: #1e293b;
     --preview-nav-border: #334155;
-    --preview-nav-link: #cbd5e1;
-    --preview-nav-link-hover: #60a5fa;
-    --preview-nav-link-hover-bg: rgba(96, 165, 250, 0.1);
+    --preview-nav-link: #93c5fd;
+    --preview-nav-link-hover: #93c5fd;
+    --preview-nav-link-hover-bg: rgba(147, 197, 253, 0.1);
+    --nav-active-text: #0f172a;
 }
 
 /* Dark Theme Specific Styles */
