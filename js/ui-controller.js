@@ -1954,7 +1954,8 @@ function getPreviewColors(colorScale) {
     const level800 = colorScale.find(c => c.level === 800) || level700;
     
     // Determine if we're in dark mode - check both lightbox and main app
-    const isDarkMode = AppState.lightboxDarkMode || AppState.isDarkModeActive;
+    // For the main preview, prioritize the main app dark mode state
+    const isDarkMode = AppState.isDarkModeActive || AppState.lightboxDarkMode;
     
     // Smart hover color logic - creates harmony based on base color level
     function getSmartHoverColor(baseLevel) {
