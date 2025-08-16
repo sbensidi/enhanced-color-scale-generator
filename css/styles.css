@@ -2940,12 +2940,12 @@ body.minimal-view .color-card-minimal {
 
 .lightbox-content.lightbox-dark-mode-active .nav-link:hover {
     color: var(--preview-nav-link-hover, var(--primary-color));
-    background: var(--preview-nav-link-hover-bg, #374151);
+    background: var(--preview-nav-link-hover-bg, var(--hover-bg));
 }
 
 .lightbox-content.lightbox-dark-mode-active .preview-card {
-    background: var(--preview-card-bg, #1e293b);
-    border-color: var(--preview-card-border, #334155);
+    background: var(--preview-card-bg, var(--card-bg));
+    border-color: var(--preview-card-border, var(--border-color));
 }
 
 .lightbox-content.lightbox-dark-mode-active .preview-input {
@@ -2974,20 +2974,20 @@ body.minimal-view .color-card-minimal {
 .lightbox-content.lightbox-dark-mode-active .preview-heading-1,
 .lightbox-content.lightbox-dark-mode-active .preview-heading-2,
 .lightbox-content.lightbox-dark-mode-active .preview-heading-3 {
-    color: var(--preview-heading, #f1f5f9);
+    color: var(--preview-heading, var(--title-color));
 }
 
 .lightbox-content.lightbox-dark-mode-active .preview-paragraph {
-    color: var(--preview-text, #e2e8f0);
+    color: var(--preview-text, var(--text-color));
 }
 
 .lightbox-content.lightbox-dark-mode-active .preview-muted {
-    color: var(--preview-muted, #94a3b8);
+    color: var(--preview-muted, var(--subtitle-color));
 }
 
 .lightbox-content.lightbox-dark-mode-active .preview-nav {
-    background: var(--preview-nav-bg, #0f172a);
-    border-color: var(--preview-nav-border, #334155);
+    background: var(--preview-nav-bg, var(--card-bg));
+    border-color: var(--preview-nav-border, var(--border-color));
 }
 
 /* Fix dark mode toggle label color in lightbox */
