@@ -2794,7 +2794,7 @@ body.minimal-view .color-card-minimal {
 
 .card-action {
     background: var(--preview-primary, var(--primary-color));
-    color: white;
+    color: var(--preview-primary-text, white);
 }
 
 /* Preview Alerts */
@@ -2892,7 +2892,7 @@ body.minimal-view .color-card-minimal {
 
 .nav-link.active {
     background: var(--preview-primary, var(--primary-color));
-    color: var(--nav-active-text, white);
+    color: var(--preview-primary-text, white);
 }
 
 /* Preview Controls */

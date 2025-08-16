@@ -77,6 +77,8 @@
     --preview-nav-link-hover: #bfdbfe;
     --preview-nav-link-hover-bg: rgba(147, 197, 253, 0.1);
     --nav-active-text: #0f172a;
+    --preview-primary-text: #0f172a;
+    --preview-primary-alpha: rgba(191, 219, 254, 0.15);
 }
 
 /* Dark Theme Specific Styles */

@@ -77,6 +77,8 @@
     --preview-nav-link-hover: #1d4ed8;
     --preview-nav-link-hover-bg: rgba(29, 78, 216, 0.05);
     --nav-active-text: white;
+    --preview-primary-text: white;
+    --preview-primary-alpha: rgba(29, 78, 216, 0.1);
 }
 
 /* Light Theme Specific Styles */
