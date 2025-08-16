@@ -641,6 +641,7 @@ function updateAccessibilityIndicator(activeInput) {
  */
 function handleThemeToggle() {
     AppState.isDarkModeActive = !AppState.isDarkModeActive;
+    console.log('Theme toggled, isDarkModeActive:', AppState.isDarkModeActive);
     
     // Update ARIA state
     updateToggleButtonAria(domElements.themeToggle, AppState.isDarkModeActive);
@@ -665,6 +666,7 @@ function handleThemeToggle() {
     
     // Update preview to use correct colors for the new theme
     if (AppState.lightModeScale && AppState.lightModeScale.length > 0) {
+        console.log('Calling updateLivePreview after theme toggle');
         updateLivePreview();
     }
     
@@ -1771,6 +1773,17 @@ function updateLivePreview() {
         previewContext = domElements.previewAccessible.checked && AppState.accessibleDarkScale ? 'dark-accessible' : 'dark-original';
     }
     
+    // Debug: log which scale is being used
+    console.log('updateLivePreview Debug:', {
+        isDarkModeActive: AppState.isDarkModeActive,
+        previewDarkModeChecked: domElements.previewDarkMode.checked,
+        bodyHasDarkTheme: document.body.classList.contains('dark-theme'),
+        scaleType: previewContext,
+        scaleColors: scaleToUse.map(c => `${c.level}: ${c.hex}`),
+        lightScaleColors: AppState.lightModeScale?.map(c => `${c.level}: ${c.hex}`),
+        darkScaleColors: AppState.darkModeScale?.map(c => `${c.level}: ${c.hex}`)
+    });
+    
     // Apply colors to preview with context information
     applyColorsToPreview(scaleToUse, previewContext);
     
@@ -2661,9 +2674,10 @@ function updateLightboxPreview() {
     preview.style.setProperty('--preview-primary', colors.primary);
     preview.style.setProperty('--preview-primary-hover', colors.primaryHover);
     
-    // Focus colors for lightbox
+    // Focus colors for lightbox - use same colors as main preview
     preview.style.setProperty('--focus-color', colors.primary);
     preview.style.setProperty('--focus-ring-color', colors.primaryAlpha);
+    preview.style.setProperty('--preview-primary-alpha', colors.primaryAlpha);
     preview.style.setProperty('--preview-accent', colors.accent);
     
     // Secondary neutral colors

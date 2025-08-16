@@ -2756,13 +2756,13 @@ body.minimal-view .color-card-minimal {
 .preview-input:focus,
 .preview-select:focus {
     outline: none;
-    border-color: var(--preview-input-focus, var(--primary-color));
-    box-shadow: 0 0 0 3px var(--preview-primary-alpha, var(--primary-color-alpha));
+    border-color: var(--focus-color, var(--preview-primary, var(--primary-color)));
+    box-shadow: 0 0 0 3px var(--focus-ring-color, var(--preview-primary-alpha, var(--primary-color-alpha)));
 }
 
 .preview-input.focused {
-    border-color: var(--preview-input-focus, var(--primary-color));
-    box-shadow: 0 0 0 3px var(--preview-primary-alpha, var(--primary-color-alpha));
+    border-color: var(--focus-color, var(--preview-primary, var(--primary-color)));
+    box-shadow: 0 0 0 3px var(--focus-ring-color, var(--preview-primary-alpha, var(--primary-color-alpha)));
 }
 
 .preview-input.error {
@@ -2955,12 +2955,12 @@ body.minimal-view .color-card-minimal {
 }
 .lightbox-content.lightbox-dark-mode-active .preview-input:focus,
 .lightbox-content.lightbox-dark-mode-active .preview-select:focus {
-    border-color: var(--preview-input-focus, var(--primary-color));
-    box-shadow: 0 0 0 3px var(--preview-primary-alpha, rgba(59, 130, 246, 0.2));
+    border-color: var(--focus-color, var(--preview-primary, var(--primary-color)));
+    box-shadow: 0 0 0 3px var(--focus-ring-color, var(--preview-primary-alpha, var(--primary-color-alpha)));
 }
 .lightbox-content.lightbox-dark-mode-active .preview-input.focused {
-    border-color: var(--preview-input-focus, var(--primary-color));
-    box-shadow: 0 0 0 3px var(--preview-primary-alpha, rgba(59, 130, 246, 0.2));
+    border-color: var(--focus-color, var(--preview-primary, var(--primary-color)));
+    box-shadow: 0 0 0 3px var(--focus-ring-color, var(--preview-primary-alpha, var(--primary-color-alpha)));
 }
 .lightbox-content.lightbox-dark-mode-active .preview-input.error {
     border-color: var(--preview-error, #f87171);
