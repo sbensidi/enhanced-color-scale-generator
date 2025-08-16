@@ -186,33 +186,22 @@ a:not(.btn):not(.button):not(.buy-coffee-btn):not(.floating-coffee-btn):not(.ski
     color: var(--primary-color) !important;
 }
 
-/* Improve button contrast */
-.export-btn,
-.sticky-preview-btn,
-.btn-primary {
-    background-color: var(--primary-color);
-    color: #ffffff;
-}
+/* Remove button contrast overrides - let preview system handle colors */
+/* These overrides were preventing preview buttons from using generated colors */
 
-.export-btn:hover,
-.sticky-preview-btn:hover,
-.btn-primary:hover {
-    background-color: var(--primary-color-hover);
-}
-
-/* High contrast error messages */
+/* High contrast error messages - use CSS variables */
 .error-message {
-    color: #dc2626;
-    background-color: #fef2f2;
-    border: 1px solid #fecaca;
+    color: var(--error-color);
+    background-color: var(--error-bg);
+    border: 1px solid var(--error-color);
     padding: 8px 12px;
     border-radius: 4px;
 }
 
 .dark-theme .error-message {
-    color: #f87171;
-    background-color: #1f1717;
-    border-color: #991b1b;
+    color: var(--error-color);
+    background-color: var(--error-bg);
+    border-color: var(--error-color);
 }
 
 /* Ensure proper heading hierarchy with explicit font sizes */
@@ -239,16 +228,16 @@ h6 { font-size: 0.875rem; }
     font-style: italic;
 }
 
-/* Form validation styles */
+/* Form validation styles - use CSS variables */
 .form-field.error input,
 .form-field.error select,
 .form-field.error textarea {
-    border-color: #dc2626;
-    background-color: #fef2f2;
+    border-color: var(--error-color);
+    background-color: var(--error-bg);
 }
 
 .form-field.error .field-error {
-    color: #dc2626;
+    color: var(--error-color);
     font-size: 0.875rem;
     margin-top: 0.25rem;
     display: block;
@@ -306,9 +295,9 @@ th {
     text-align: left;
 }
 
-/* Error messages */
+/* Error messages - use CSS variables */
 .error-message {
-    color: #dc2626;
+    color: var(--error-color);
     font-weight: 500;
     display: flex;
     align-items: center;
@@ -320,9 +309,9 @@ th {
     flex-shrink: 0;
 }
 
-/* Success messages */
+/* Success messages - use CSS variables */
 .success-message {
-    color: #059669;
+    color: var(--success-color);
     font-weight: 500;
     display: flex;
     align-items: center;
@@ -395,29 +384,29 @@ th {
     border-color: var(--primary-color);
 }
 
-/* Improve toast notifications contrast */
+/* Improve toast notifications contrast - use CSS variables */
 .toast-container .toast {
-    background-color: #ffffff;
-    color: #111827;
-    border: 1px solid #d1d5db;
+    background-color: var(--card-bg);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
 }
 
 .toast-container .toast.success {
-    background-color: #ffffff;
-    color: #111827;
-    border-color: #047857;
+    background-color: var(--card-bg);
+    color: var(--text-color);
+    border-color: var(--success-color);
 }
 
 .toast-container .toast.error {
-    background-color: #ffffff;
-    color: #111827;
-    border-color: #dc2626;
+    background-color: var(--card-bg);
+    color: var(--text-color);
+    border-color: var(--error-color);
 }
 
 .toast-container .toast.warning {
-    background-color: #ffffff;
-    color: #111827;
-    border-color: #f59e0b;
+    background-color: var(--card-bg);
+    color: var(--text-color);
+    border-color: var(--warning-color);
 }
 
 /* Ensure proper text contrast in all states - use CSS variables */
@@ -458,16 +447,16 @@ th {
     outline-offset: 4px !important;
 }
 
-/* Fix accessibility indicator colors */
+/* Fix accessibility indicator colors - use CSS variables */
 .accessibility-indicator.not-accessible {
-    background-color: #dc2626 !important;
+    background-color: var(--error-color) !important;
     color: #ffffff !important;
     font-weight: 700 !important;
     border: none !important;
 }
 
 .accessibility-indicator.accessible {
-    background-color: #047857 !important;
+    background-color: var(--success-color) !important;
     color: #ffffff !important;
     font-weight: 700 !important;
     border: none !important;
