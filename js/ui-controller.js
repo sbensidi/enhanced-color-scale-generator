@@ -1765,7 +1765,8 @@ function updateLivePreview() {
         previewContext = 'light-accessible';
     }
     
-    if (domElements.previewDarkMode.checked) {
+    // Use dark mode scale if either preview dark mode checkbox is checked OR global dark mode is active
+    if (domElements.previewDarkMode.checked || AppState.isDarkModeActive) {
         scaleToUse = AppState.darkModeScale;
         previewContext = domElements.previewAccessible.checked && AppState.accessibleDarkScale ? 'dark-accessible' : 'dark-original';
     }
