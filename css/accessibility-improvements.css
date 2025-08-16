@@ -379,9 +379,9 @@ th {
 .algorithm-select:focus,
 .color-picker:focus,
 .color-picker-text:focus {
-    outline: 3px solid var(--primary-color);
+    outline: 3px solid var(--focus-color, var(--primary-color));
     outline-offset: 2px;
-    border-color: var(--primary-color);
+    border-color: var(--focus-color, var(--primary-color));
 }
 
 /* Improve toast notifications contrast - use CSS variables */

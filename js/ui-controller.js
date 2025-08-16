@@ -1817,6 +1817,10 @@ function applyColorsToPreview(colorScale, context = 'light-original') {
             // Core action colors
             previewContainer.style.setProperty('--preview-primary', colors.primary);
             previewContainer.style.setProperty('--preview-primary-hover', colors.primaryHover);
+            
+            // Focus colors - use same primary color for consistency
+            previewContainer.style.setProperty('--focus-color', colors.primary);
+            previewContainer.style.setProperty('--focus-ring-color', colors.primaryAlpha);
             previewContainer.style.setProperty('--preview-primary-alpha', colors.primaryAlpha);
             previewContainer.style.setProperty('--preview-primary-text', colors.primaryText);
             
@@ -1943,8 +1947,8 @@ function getPreviewColors(colorScale) {
     const level700 = colorScale.find(c => c.level === 700) || colorScale[colorScale.length - 1];
     const level800 = colorScale.find(c => c.level === 800) || level700;
     
-    // Determine if we're in dark mode
-    const isDarkMode = AppState.lightboxDarkMode;
+    // Determine if we're in dark mode - check both lightbox and main app
+    const isDarkMode = AppState.lightboxDarkMode || AppState.isDarkModeActive;
     
     // Smart hover color logic - creates harmony based on base color level
     function getSmartHoverColor(baseLevel) {
@@ -2638,6 +2642,10 @@ function updateLightboxPreview() {
     // Core brand colors
     preview.style.setProperty('--preview-primary', colors.primary);
     preview.style.setProperty('--preview-primary-hover', colors.primaryHover);
+    
+    // Focus colors for lightbox
+    preview.style.setProperty('--focus-color', colors.primary);
+    preview.style.setProperty('--focus-ring-color', colors.primaryAlpha);
     preview.style.setProperty('--preview-accent', colors.accent);
     
     // Secondary neutral colors

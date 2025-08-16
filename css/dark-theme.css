@@ -110,8 +110,8 @@
 .dark-theme .color-input:focus,
 .dark-theme .scale-select:focus,
 .dark-theme .export-select:focus {
-    border-color: #60a5fa;
-    box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
+    border-color: var(--focus-color, var(--primary-color));
+    box-shadow: 0 0 0 3px var(--focus-ring-color, var(--primary-color-alpha));
 }
 
 /* Dark theme button states */
