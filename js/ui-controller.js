@@ -1963,10 +1963,14 @@ function getPreviewColors(colorScale) {
     }
     
     // Modern, realistic color usage - minimal colored surfaces, focused accents
+    // Use level 400 for light mode, level 600 for dark mode
+    const primaryLevel = isDarkMode ? level600 : level400;
+    const primaryLevelNumber = isDarkMode ? 600 : 400;
+    
     return {
         // Primary action colors (only for buttons, links, focus states)
-        primary: level600.hex,
-        primaryHover: getSmartHoverColor(600),
+        primary: primaryLevel.hex,
+        primaryHover: getSmartHoverColor(primaryLevelNumber),
         primaryAlpha: `${level500.hex}15`, // Very subtle 8% opacity
         primaryText: '#ffffff',
         
@@ -1979,7 +1983,7 @@ function getPreviewColors(colorScale) {
         
         // Text colors - with brand color for headings
         text: isDarkMode ? '#f1f5f9' : '#1f2937',
-        heading: isDarkMode ? level600.hex : level700.hex, // Same color as primary button
+        heading: primaryLevel.hex, // Same color as primary button
         muted: isDarkMode ? '#9ca3af' : '#6b7280',
         
         // Backgrounds - mostly neutral with very subtle color hints

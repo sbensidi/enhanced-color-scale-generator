@@ -63,22 +63,8 @@
     /* Typography */
     --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
     
-    /* Preview Section Colors */
-    --preview-heading: #111827;
-    --preview-text: #1f2937;
-    --preview-muted: #6b7280;
-    --preview-primary: #1d4ed8;
-    --preview-card-bg: #ffffff;
-    --preview-card-border: #e5e7eb;
-    --preview-card-text: #1f2937;
-    --preview-nav-bg: #ffffff;
-    --preview-nav-border: #e5e7eb;
-    --preview-nav-link: #1d4ed8;
-    --preview-nav-link-hover: #1d4ed8;
-    --preview-nav-link-hover-bg: rgba(29, 78, 216, 0.05);
-    --nav-active-text: white;
-    --preview-primary-text: white;
-    --preview-primary-alpha: rgba(29, 78, 216, 0.1);
+    /* Preview Section Colors - Dynamic (set by JavaScript from generated palette) */
+    /* These fallback to theme colors when no palette is generated */
 }
 
 /* Light Theme Specific Styles */
