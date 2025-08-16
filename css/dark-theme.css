@@ -67,14 +67,14 @@
     --preview-heading: #f1f5f9;
     --preview-text: #e2e8f0;
     --preview-muted: #94a3b8;
-    --preview-primary: #93c5fd;
+    --preview-primary: #bfdbfe;
     --preview-card-bg: #1e293b;
     --preview-card-border: #334155;
     --preview-card-text: #e2e8f0;
     --preview-nav-bg: #1e293b;
     --preview-nav-border: #334155;
-    --preview-nav-link: #93c5fd;
-    --preview-nav-link-hover: #93c5fd;
+    --preview-nav-link: #bfdbfe;
+    --preview-nav-link-hover: #bfdbfe;
     --preview-nav-link-hover-bg: rgba(147, 197, 253, 0.1);
     --nav-active-text: #0f172a;
 }
