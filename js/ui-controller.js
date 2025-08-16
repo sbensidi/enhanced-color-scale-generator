@@ -641,7 +641,6 @@ function updateAccessibilityIndicator(activeInput) {
  */
 function handleThemeToggle() {
     AppState.isDarkModeActive = !AppState.isDarkModeActive;
-    console.log('Theme toggled, isDarkModeActive:', AppState.isDarkModeActive);
     
     // Update ARIA state
     updateToggleButtonAria(domElements.themeToggle, AppState.isDarkModeActive);
@@ -666,7 +665,6 @@ function handleThemeToggle() {
     
     // Update preview to use correct colors for the new theme
     if (AppState.lightModeScale && AppState.lightModeScale.length > 0) {
-        console.log('Calling updateLivePreview after theme toggle');
         updateLivePreview();
     }
     
@@ -1773,16 +1771,6 @@ function updateLivePreview() {
         previewContext = domElements.previewAccessible.checked && AppState.accessibleDarkScale ? 'dark-accessible' : 'dark-original';
     }
     
-    // Debug: log which scale is being used
-    console.log('updateLivePreview Debug:', {
-        isDarkModeActive: AppState.isDarkModeActive,
-        previewDarkModeChecked: domElements.previewDarkMode.checked,
-        bodyHasDarkTheme: document.body.classList.contains('dark-theme'),
-        scaleType: previewContext,
-        scaleColors: scaleToUse.map(c => `${c.level}: ${c.hex}`),
-        lightScaleColors: AppState.lightModeScale?.map(c => `${c.level}: ${c.hex}`),
-        darkScaleColors: AppState.darkModeScale?.map(c => `${c.level}: ${c.hex}`)
-    });
     
     // Apply colors to preview with context information
     applyColorsToPreview(scaleToUse, previewContext);
@@ -1834,7 +1822,6 @@ function applyColorsToPreview(colorScale, context = 'light-original') {
         if (previewContainer) {
             // Apply colors directly to the preview container
             // Core action colors
-            console.log('Setting --preview-primary to:', colors.primary);
             previewContainer.style.setProperty('--preview-primary', colors.primary);
             previewContainer.style.setProperty('--preview-primary-hover', colors.primaryHover);
             
@@ -1992,15 +1979,6 @@ function getPreviewColors(colorScale) {
     const primaryLevel = isDarkMode ? level600 : level400;
     const primaryLevelNumber = isDarkMode ? 600 : 400;
     
-    // Debug logging
-    console.log('getPreviewColors Debug:', {
-        isDarkMode,
-        primaryLevelNumber,
-        primaryColor: primaryLevel.hex,
-        colorScaleLength: colorScale.length,
-        level400: level400?.hex,
-        level600: level600?.hex
-    });
     
     return {
         // Primary action colors (only for buttons, links, focus states)
