@@ -663,6 +663,11 @@ function handleThemeToggle() {
         }
     }
     
+    // Update preview to use correct colors for the new theme
+    if (AppState.lightModeScale && AppState.lightModeScale.length > 0) {
+        updatePreview();
+    }
+    
     // Animate theme toggle
     animateThemeToggle();
 }
