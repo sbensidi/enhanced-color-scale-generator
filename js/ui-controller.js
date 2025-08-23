@@ -1075,6 +1075,24 @@ function createReversedDarkModeScale(lightModeScale) {
 }
 
 /**
+ * Update lightbox subtitle to reflect current scale size
+ * @param {number} scaleSize - Number of colors in current scale
+ * @param {string} primaryColor - Primary color hex value
+ */
+function updateLightboxSubtitle(scaleSize, primaryColor) {
+    const subtitleElement = document.getElementById('lightboxSubtitle');
+    if (subtitleElement) {
+        const scaleText = scaleSize === 3 ? '3 colors' :
+                         scaleSize === 5 ? '5 colors' :
+                         scaleSize === 7 ? '7 colors' :
+                         scaleSize === 9 ? '9 colors' :
+                         `${scaleSize} colors`;
+        
+        subtitleElement.innerHTML = `Preview optimized for <strong style="color: ${primaryColor}">${scaleText}</strong> scale - Components adapt to available colors`;
+    }
+}
+
+/**
  * Check if color is accessible according to the selected accessibility mode
  * @param {Object} colorInfo - Color object with accessibility data
  * @param {string} accessibilityMode - 'full', 'black-only', 'white-only'
@@ -1830,6 +1848,7 @@ function applyColorsToPreview(colorScale, context = 'light-original') {
             previewContainer.style.setProperty('--focus-ring-color', colors.primaryAlpha);
             previewContainer.style.setProperty('--preview-primary-alpha', colors.primaryAlpha);
             previewContainer.style.setProperty('--preview-primary-text', colors.primaryText);
+            previewContainer.style.setProperty('--preview-outline-hover-text', colors.outlineHoverText);
             
             // Secondary (neutral) colors
             previewContainer.style.setProperty('--preview-secondary', colors.secondary);
@@ -1859,6 +1878,7 @@ function applyColorsToPreview(colorScale, context = 'light-original') {
             previewContainer.style.setProperty('--preview-nav-link-hover', colors.navLinkHover);
             previewContainer.style.setProperty('--preview-nav-link-hover-bg', colors.navLinkHoverBg);
             previewContainer.style.setProperty('--preview-nav-active', colors.navActive);
+            previewContainer.style.setProperty('--preview-nav-active-text', colors.navActiveText);
             
             // Ghost/outline elements
             previewContainer.style.setProperty('--preview-ghost-color', colors.ghostColor);
@@ -1887,6 +1907,7 @@ function applyColorsToPreview(colorScale, context = 'light-original') {
             --preview-primary-hover: ${colors.primaryHover};
             --preview-primary-alpha: ${colors.primaryAlpha};
             --preview-primary-text: ${colors.primaryText};
+            --preview-outline-hover-text: ${colors.outlineHoverText};
             --preview-accent: ${colors.accent};
             
             /* Neutral secondary colors */
@@ -1917,6 +1938,7 @@ function applyColorsToPreview(colorScale, context = 'light-original') {
             --preview-nav-link-hover: ${colors.navLinkHover};
             --preview-nav-link-hover-bg: ${colors.navLinkHoverBg};
             --preview-nav-active: ${colors.navActive};
+            --preview-nav-active-text: ${colors.navActiveText};
             
             /* Ghost/outline elements */
             --preview-ghost-color: ${colors.ghostColor};
@@ -1939,99 +1961,181 @@ function applyColorsToPreview(colorScale, context = 'light-original') {
 }
 
 /**
- * Extract preview colors from color scale
- * @param {Array} colorScale - Color scale array
+ * Extract preview colors from color scale - Rewritten from scratch
+ * Based on the logic defined in color-system-documentation.html
+ * @param {Array} colorScale - Color scale array (light or dark mode scale)
+ * @param {boolean} isLightbox - Whether this is for lightbox preview
  * @returns {Object} Preview color mapping
  */
-function getPreviewColors(colorScale) {
-    // Find specific levels or use closest matches
-    const level100 = colorScale.find(c => c.level === 100) || colorScale[0];
-    const level200 = colorScale.find(c => c.level === 200) || colorScale[1] || level100;
-    const level300 = colorScale.find(c => c.level === 300) || colorScale[2] || level200;
-    const level400 = colorScale.find(c => c.level === 400) || colorScale[Math.floor(colorScale.length / 2)];
-    const level500 = colorScale.find(c => c.level === 500) || colorScale[colorScale.length - 3] || level400;
-    const level600 = colorScale.find(c => c.level === 600) || colorScale[colorScale.length - 2] || level500;
-    const level700 = colorScale.find(c => c.level === 700) || colorScale[colorScale.length - 1];
-    const level800 = colorScale.find(c => c.level === 800) || level700;
+function getPreviewColors(colorScale, isLightbox = false) {
+    // Extract all available levels from the scale
+    const levels = {};
+    colorScale.forEach(color => {
+        levels[color.level] = color;
+    });
     
-    // Determine if we're in dark mode - check both lightbox and main app
-    // For the main preview, prioritize the main app dark mode state
-    const isDarkMode = AppState.isDarkModeActive || AppState.lightboxDarkMode;
+    // Determine current theme mode
+    const isDarkMode = isLightbox ? AppState.lightboxDarkMode : AppState.isDarkModeActive;
     
-    // Smart hover color logic - creates harmony based on base color level
-    function getSmartHoverColor(baseLevel) {
-        if (baseLevel <= 300) {
-            // Light colors get darker on hover (more intense)
-            return (baseLevel === 100) ? level200.hex : 
-                   (baseLevel === 200) ? level300.hex : level400.hex;
-        } else if (baseLevel >= 600) {
-            // Dark colors get lighter on hover (less intense)
-            return (baseLevel === 600) ? level500.hex :
-                   (baseLevel === 700) ? level600.hex : level700.hex;
+    
+    // Adaptive Logic: Handle different scale sizes (3, 5, 7, 9 levels)
+    const availableLevels = Object.keys(levels).map(Number).sort((a, b) => a - b);
+    const scaleSize = availableLevels.length;
+    
+    
+    let primaryLevel, primaryLevelNumber;
+    
+    // Smart level selection based on scale size
+    if (isDarkMode) {
+        // Dark Mode: In reversed scale, bright colors are at high level numbers
+        if (scaleSize >= 7) {
+            // 7+ levels: Use second highest level (avoid extremes)
+            const highLevels = availableLevels.slice(-3); // Last 3 levels
+            primaryLevel = levels[highLevels[1]] || levels[highLevels[2]] || levels[highLevels[0]];
+        } else if (scaleSize >= 5) {
+            // 5-6 levels: Second highest level  
+            const highIndex = availableLevels.length - 2;
+            primaryLevel = levels[availableLevels[highIndex]] || levels[availableLevels[availableLevels.length - 1]];
         } else {
-            // Medium colors (400-500) get darker for better contrast
-            return (baseLevel === 400) ? level500.hex : level600.hex;
+            // 3-4 levels: Highest available
+            primaryLevel = levels[availableLevels[availableLevels.length - 1]];
+        }
+        primaryLevelNumber = primaryLevel.level;
+    } else {
+        // Light Mode: Always look for level 400 or middle level
+        if (scaleSize >= 7) {
+            // 7+ levels: Look for ideal level 400
+            primaryLevel = levels[400] || levels[500] || levels[300] || levels[availableLevels[Math.floor(scaleSize / 2)]];
+        } else if (scaleSize >= 5) {
+            // 5-6 levels: Middle level
+            primaryLevel = levels[availableLevels[Math.floor(scaleSize / 2)]];
+        } else {
+            // 3-4 levels: Middle level
+            primaryLevel = levels[availableLevels[Math.floor(scaleSize / 2)]];
+        }
+        primaryLevelNumber = primaryLevel.level;
+    }
+    
+    
+    // Adaptive hover logic based on available levels
+    function getHoverColor() {
+        const currentIndex = availableLevels.indexOf(primaryLevelNumber);
+        
+        if (isDarkMode) {
+            // Dark Mode: In reversed scale, higher level numbers are brighter colors
+            if (currentIndex < availableLevels.length - 1) {
+                // Go to brighter color (higher level number in dark mode)
+                return levels[availableLevels[currentIndex + 1]].hex;
+            } else if (currentIndex > 0) {
+                // At brightest, go slightly darker
+                return levels[availableLevels[currentIndex - 1]].hex;
+            }
+        } else {
+            // Light Mode: Go darker (higher level number)
+            if (currentIndex < availableLevels.length - 1) {
+                // Can go darker
+                return levels[availableLevels[currentIndex + 1]].hex;
+            } else if (currentIndex > 0) {
+                // At darkest, go to lighter
+                return levels[availableLevels[currentIndex - 1]].hex;
+            }
+        }
+        
+        // Fallback to primary if no variation possible
+        return primaryLevel.hex;
+    }
+    
+    // Adaptive accent colors - complementary to primary
+    let accentLevel;
+    const primaryIndex = availableLevels.indexOf(primaryLevelNumber);
+    
+    if (isDarkMode) {
+        // Dark mode: Use a slightly different bright level for accent
+        if (primaryIndex < availableLevels.length - 1) {
+            accentLevel = levels[availableLevels[primaryIndex + 1]]; // Next level down
+        } else if (primaryIndex > 0) {
+            accentLevel = levels[availableLevels[primaryIndex - 1]]; // Previous level
+        } else {
+            accentLevel = primaryLevel; // Fallback
+        }
+    } else {
+        // Light mode: Use a darker level for accent
+        if (primaryIndex < availableLevels.length - 1) {
+            accentLevel = levels[availableLevels[primaryIndex + 1]]; // Darker level
+        } else {
+            accentLevel = primaryLevel; // Fallback
         }
     }
     
-    // Modern, realistic color usage - minimal colored surfaces, focused accents
-    // Use level 400 for light mode, level 600 for dark mode
-    const primaryLevel = isDarkMode ? level600 : level400;
-    const primaryLevelNumber = isDarkMode ? 600 : 400;
+    // Focus colors - same as accent for consistency
+    const focusColor = accentLevel;
     
+    // Navigation active state - use primary for maximum prominence
+    let navActiveLevel = primaryLevel;
+    
+    // Text colors for interactive elements
+    const interactiveTextColor = isDarkMode ? 
+        '#1f2937' : // Dark text on bright backgrounds in dark mode
+        '#ffffff';  // Light text on medium/dark backgrounds in light mode
+    
+    const navActiveTextColor = isDarkMode ?
+        '#1f2937' : // Dark text on bright nav items in dark mode
+        '#ffffff';  // Light text on dark nav items in light mode
     
     return {
-        // Primary action colors (only for buttons, links, focus states)
+        // === PRIMARY COLORS ===
         primary: primaryLevel.hex,
-        primaryHover: getSmartHoverColor(primaryLevelNumber),
-        primaryAlpha: `${level500.hex}15`, // Very subtle 8% opacity
-        primaryText: '#ffffff',
+        primaryHover: getHoverColor(),
+        primaryAlpha: `${(isDarkMode ? accentLevel : levels[500] || primaryLevel).hex}15`,
+        primaryText: interactiveTextColor,
+        outlineHoverText: interactiveTextColor,
         
-        // Secondary colors (much more subtle)
-        secondary: isDarkMode ? '#4b5563' : '#6b7280', // Neutral gray, not color-themed
+        // === SECONDARY COLORS ===
+        secondary: isDarkMode ? '#4b5563' : '#6b7280',
         secondaryHover: isDarkMode ? '#374151' : '#9ca3af',
         
-        // Accent for small highlights only
-        accent: level500.hex,
+        // === ACCENT COLORS ===
+        accent: accentLevel.hex,
         
-        // Text colors - with brand color for headings
+        // === TEXT COLORS ===
         text: isDarkMode ? '#f1f5f9' : '#1f2937',
-        heading: primaryLevel.hex, // Same color as primary button
+        heading: primaryLevel.hex,
         muted: isDarkMode ? '#9ca3af' : '#6b7280',
         
-        // Backgrounds - mostly neutral with very subtle color hints
+        // === BACKGROUND COLORS ===
         sectionBg: isDarkMode ? '#0f172a' : '#ffffff',
         cardBg: isDarkMode ? '#1e293b' : '#ffffff',
         cardBorder: isDarkMode ? '#334155' : '#e5e7eb',
         cardTitle: isDarkMode ? '#f8fafc' : '#111827',
         cardText: isDarkMode ? '#cbd5e1' : '#374151',
         
-        // Form elements - neutral with color accents only on focus
+        // === FORM ELEMENTS ===
         inputBg: isDarkMode ? '#1e293b' : '#ffffff',
         inputBorder: isDarkMode ? '#334155' : '#d1d5db',
-        inputFocus: level500.hex, // Only use brand color for focus states
+        inputFocus: focusColor.hex,
         
-        // Navigation - clean with theme colors on interaction
+        // === NAVIGATION ===
         navBg: isDarkMode ? '#0f172a' : '#f9fafb',
         navBorder: isDarkMode ? '#1e293b' : '#e5e7eb',
         navLink: isDarkMode ? '#e2e8f0' : '#374151',
-        navLinkHover: level500.hex, // Brand color on hover
-        navLinkHoverBg: isDarkMode ? `${level500.hex}15` : `${level500.hex}10`, // Subtle background on hover
-        navActive: level600.hex,
+        navLinkHover: accentLevel.hex,
+        navLinkHoverBg: `${accentLevel.hex}15`,
+        navActive: navActiveLevel.hex,
+        navActiveText: navActiveTextColor,
         
-        // Ghost/outline elements
+        // === INTERACTIVE ELEMENTS ===
         ghostColor: isDarkMode ? '#e2e8f0' : '#6b7280',
         ghostHover: isDarkMode ? '#f1f5f9' : '#374151',
         ghostBorder: isDarkMode ? '#334155' : '#d1d5db',
         
-        // Borders and dividers
+        // === SYSTEM ELEMENTS ===
         border: isDarkMode ? '#334155' : '#e5e7eb',
         titleColor: isDarkMode ? '#ffffff' : '#111827',
         controlsBg: isDarkMode ? '#1e293b' : '#f9fafb',
         
-        // Alert colors (keep system colors, not theme colors)
+        // === ALERT COLORS (System colors - not theme dependent) ===
         success: '#059669',
-        warning: '#d97706', 
+        warning: '#d97706',
         error: '#dc2626',
         successBg: isDarkMode ? '#064e3b15' : '#dcfce715',
         warningBg: isDarkMode ? '#92400e15' : '#fef3c715',
@@ -2519,7 +2623,8 @@ function openPreviewLightbox() {
     // Add the cloned content to lightbox
     domElements.lightboxBody.appendChild(clonedContent);
     
-    // Initialize lightbox state
+    // Initialize lightbox state to match main app dark mode
+    AppState.lightboxDarkMode = AppState.isDarkModeActive;
     updateLightboxThemeIcon();
     
     // Apply current colors to the preview
@@ -2623,9 +2728,9 @@ function updateLightboxPreview() {
     // Switch to dark mode if needed
     if (AppState.lightboxDarkMode) {
         colorScale = AppState.darkModeScale;
-        if (!baseFullyAccessible && AppState.accessibleDarkScale && AppState.accessibleDarkScale.length > 0) {
-            colorScale = AppState.accessibleDarkScale;
-        }
+        // Skip accessibility override for preview - show the actual user colors
+        // The accessibility system shouldn't change the hue, but it does, causing wrong colors
+        // For now, always use the regular dark mode scale in the preview
     }
     
     if (!colorScale || colorScale.length === 0) return;
@@ -2640,7 +2745,10 @@ function updateLightboxPreview() {
     }
     
     // Apply colors directly to the lightbox preview container
-    const colors = getPreviewColors(colorScale);
+    const colors = getPreviewColors(colorScale, true);
+    
+    // Update subtitle to reflect current scale size (after colors are calculated)
+    updateLightboxSubtitle(colorScale.length, colors.primary);
     
     // Apply CSS custom properties directly to the preview container
     Object.entries(colors).forEach(([property, value]) => {
@@ -2686,6 +2794,7 @@ function updateLightboxPreview() {
     preview.style.setProperty('--preview-nav-link-hover', colors.navLinkHover);
     preview.style.setProperty('--preview-nav-link-hover-bg', colors.navLinkHoverBg);
     preview.style.setProperty('--preview-nav-active', colors.navActive);
+    preview.style.setProperty('--preview-nav-active-text', colors.navActiveText);
     
     // Ghost/outline elements
     preview.style.setProperty('--preview-ghost-color', colors.ghostColor);
@@ -2697,6 +2806,7 @@ function updateLightboxPreview() {
     preview.style.setProperty('--preview-success', colors.success);
     preview.style.setProperty('--preview-warning', colors.warning);
     preview.style.setProperty('--preview-error', colors.error);
+    preview.style.setProperty('--preview-outline-hover-text', colors.outlineHoverText);
 }
 
 

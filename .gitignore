@@ -1,0 +1,10 @@
+# Documentation files
+color-system-documentation.html
+
+# Claude working directory
+.claude/
+
+# Backup files
+*.backup_before_restore
+*.bak
+*.bak2

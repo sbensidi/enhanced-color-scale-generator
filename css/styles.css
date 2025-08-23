@@ -547,9 +547,9 @@ body {
     position: relative;
     width: 32px;
     height: 18px;
-    background: #e5e7eb;
+    background: var(--border-color);
     border-radius: 9px;
-    border: 1px solid #d1d5db;
+    border: 1px solid var(--border-color);
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     outline: none;
@@ -557,7 +557,7 @@ body {
 }
 
 .toggle-track:hover {
-    background: #d1d5db;
+    background: var(--border-color);
     box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb), 0.1);
 }
 
@@ -596,7 +596,7 @@ body {
     justify-content: center;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-    border: 1px solid #d1d5db;
+    border: 1px solid var(--border-color);
 }
 
 .theme-icon {
@@ -894,7 +894,7 @@ body {
 /* #viewModeToggle inherits from .toggle-track - no custom sizing needed */
 
 #viewModeToggle:hover {
-    background: #d1d5db;
+    background: var(--border-color);
     box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb), 0.1);
 }
 
@@ -933,8 +933,8 @@ body.minimal-view .view-mode-icon {
     position: relative;
     width: 32px;
     height: 18px;
-    background: #e5e7eb;
-    border: 1px solid #d1d5db;
+    background: var(--border-color);
+    border: 1px solid var(--border-color);
     border-radius: 9px;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -943,7 +943,7 @@ body.minimal-view .view-mode-icon {
 }
 
 .sticky-view-toggle:hover {
-    background: #d1d5db;
+    background: var(--border-color);
     box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb), 0.1);
 }
 
@@ -961,7 +961,7 @@ body.minimal-view .view-mode-icon {
     background: white;
     border-radius: 50%;
     transition: all 0.2s ease;
-    border: 1px solid #d1d5db;
+    border: 1px solid var(--border-color);
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
@@ -983,8 +983,8 @@ body.minimal-view .sticky-toggle-thumb {
     position: relative;
     width: 32px;
     height: 18px;
-    background: #e5e7eb;
-    border: 1px solid #d1d5db;
+    background: var(--border-color);
+    border: 1px solid var(--border-color);
     border-radius: 9px;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -993,7 +993,7 @@ body.minimal-view .sticky-toggle-thumb {
 }
 
 .sticky-enhanced-toggle:hover {
-    background: #d1d5db;
+    background: var(--border-color);
     box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb), 0.1);
 }
 
@@ -1182,7 +1182,7 @@ body.enhanced-algorithms-active .sticky-enhanced-toggle .sticky-toggle-thumb {
 
 /* Lightbox toggle hover states - same as main toggle */
 .lightbox-dark-mode-toggle .toggle-track:hover {
-    background: #d1d5db;
+    background: var(--border-color);
     box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb), 0.1);
 }
 
@@ -1634,7 +1634,7 @@ body.enhanced-algorithms-active .sticky-enhanced-toggle .sticky-toggle-thumb {
 }
 
 .minimal-test.fail {
-    color: #ef4444;
+    color: var(--error-color);
 }
 
 /* Hide full details in minimal view */
@@ -1810,13 +1810,21 @@ body.minimal-view .color-card-minimal {
 .error-icon svg {
     width: 48px;
     height: 48px;
-    color: #ef4444;
+    color: var(--error-color);
 }
 
 .error-message {
     color: var(--error-color);
     font-weight: 500;
     font-size: 1.125rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.error-message::before {
+    content: "⚠";
+    flex-shrink: 0;
 }
 
 /* Palette Grid */
@@ -1992,15 +2000,17 @@ body.minimal-view .color-card-minimal {
 }
 
 .accessibility-indicator.accessible {
-    background: #047857 !important;
+    background: var(--success-color) !important;
     color: #ffffff !important;
     border: none !important;
+    font-weight: 700 !important;
 }
 
 .accessibility-indicator.not-accessible {
-    background: #dc2626 !important;
+    background: var(--error-color) !important;
     color: #ffffff !important;
     border: none !important;
+    font-weight: 700 !important;
 }
 
 .accessibility-indicator.dark-mode {
@@ -2173,7 +2183,7 @@ body.minimal-view .color-card-minimal {
 .value-copy-btn.copied {
     opacity: 1;
     background: rgba(16, 185, 129, 0.15);
-    color: #10b981;
+    color: var(--success-color);
 }
 
 .value-copy-btn.copied .value-copy-icon {
@@ -2266,7 +2276,7 @@ body.minimal-view .color-card-minimal {
 }
 
 .test-line.fail .test-icon {
-    color: #ef4444;
+    color: var(--error-color);
 }
 
 /* New Color Cards */
@@ -2549,7 +2559,7 @@ body.minimal-view .color-card-minimal {
 }
 
 .accessibility-label.fail {
-    color: #ef4444;
+    color: var(--error-color);
 }
 
 /* Legacy color cards for backward compatibility */
@@ -2727,7 +2737,7 @@ body.minimal-view .color-card-minimal {
 
 .btn-outline:hover {
     background: var(--preview-primary, var(--primary-color));
-    color: white;
+    color: var(--preview-outline-hover-text, white);
 }
 
 .btn-ghost {

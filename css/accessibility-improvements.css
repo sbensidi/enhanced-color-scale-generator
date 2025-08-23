@@ -1,18 +1,6 @@
 /* ===== ACCESSIBILITY IMPROVEMENTS ===== */
 /* CSS to support accessibility improvements and fix Lighthouse issues */
 
-/* Screen reader only content */
-.sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border: 0;
-}
 
 /* Fieldset styling for radio button groups */
 .config-fieldset {
@@ -189,20 +177,6 @@ a:not(.btn):not(.button):not(.buy-coffee-btn):not(.floating-coffee-btn):not(.ski
 /* Remove button contrast overrides - let preview system handle colors */
 /* These overrides were preventing preview buttons from using generated colors */
 
-/* High contrast error messages - use CSS variables */
-.error-message {
-    color: var(--error-color);
-    background-color: var(--error-bg);
-    border: 1px solid var(--error-color);
-    padding: 8px 12px;
-    border-radius: 4px;
-}
-
-.dark-theme .error-message {
-    color: var(--error-color);
-    background-color: var(--error-bg);
-    border-color: var(--error-color);
-}
 
 /* Ensure proper heading hierarchy with explicit font sizes */
 h1 { font-size: 1.875rem; }
@@ -295,19 +269,6 @@ th {
     text-align: left;
 }
 
-/* Error messages - use CSS variables */
-.error-message {
-    color: var(--error-color);
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.error-message::before {
-    content: "⚠";
-    flex-shrink: 0;
-}
 
 /* Success messages - use CSS variables */
 .success-message {
@@ -447,20 +408,6 @@ th {
     outline-offset: 4px !important;
 }
 
-/* Fix accessibility indicator colors - use CSS variables */
-.accessibility-indicator.not-accessible {
-    background-color: var(--error-color) !important;
-    color: #ffffff !important;
-    font-weight: 700 !important;
-    border: none !important;
-}
-
-.accessibility-indicator.accessible {
-    background-color: var(--success-color) !important;
-    color: #ffffff !important;
-    font-weight: 700 !important;
-    border: none !important;
-}
 
 /* Fix header contrast issues - use CSS variables */
 .app-header,

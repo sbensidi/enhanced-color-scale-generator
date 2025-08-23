@@ -17,13 +17,13 @@
     --gap-xl: 2rem;
     
     /* Success, Warning, Error */
-    --success-color: #10b981;
+    --success-color: #047857;
     --warning-color: #f59e0b;
-    --error-color: #ef4444;
+    --error-color: #dc2626;
     
-    --success-bg: rgba(16, 185, 129, 0.1);
+    --success-bg: rgba(4, 120, 87, 0.1);
     --warning-bg: rgba(245, 158, 11, 0.1);
-    --error-bg: rgba(239, 68, 68, 0.1);
+    --error-bg: rgba(220, 38, 38, 0.1);
     
     /* Background Colors */
     --primary-bg: #fafafa;
