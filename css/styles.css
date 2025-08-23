@@ -1764,11 +1764,17 @@ body.minimal-view .color-card-minimal {
 /* Palette Section */
 .palette-section {
     margin-bottom: 3rem;
+    contain: layout;
+}
+
+.main-color-section {
+    contain: layout;
 }
 
 .palette-container {
     position: relative;
     min-height: 400px;
+    contain: layout style paint;
 }
 
 /* Loading & Error States */
@@ -1784,6 +1790,8 @@ body.minimal-view .color-card-minimal {
     border-radius: 16px;
     border: 1px solid var(--border-color);
     box-shadow: var(--shadow-sm);
+    min-height: 200px;
+    contain: layout;
 }
 
 .loading-spinner {
