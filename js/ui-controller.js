@@ -39,6 +39,15 @@ let colorGenerationTimeout = null;
 /**
  * Announce message to screen readers
  */
+/**
+ * Report a usage event to analytics (js/analytics.js) — no-op if it isn't loaded
+ */
+function reportUsage(eventType, detail) {
+    if (typeof window.dispatchAnalyticsEvent === 'function') {
+        window.dispatchAnalyticsEvent(eventType, detail);
+    }
+}
+
 function announceToScreenReader(message, priority = 'polite') {
     const liveRegion = document.getElementById('live-announcements');
     if (liveRegion) {
@@ -644,6 +653,7 @@ function handleThemeToggle() {
     
     // Update ARIA state
     updateToggleButtonAria(domElements.themeToggle, AppState.isDarkModeActive);
+    reportUsage('themeChanged', { theme: AppState.isDarkModeActive ? 'dark' : 'light' });
     
     const themeIcon = document.querySelector('.theme-icon');
     
@@ -827,6 +837,13 @@ async function generateColorScaleInternalCore(showLoadingStates, startTime) {
         
         // Record performance
         AppState.lastGenerationTime = performance.now() - startTime;
+        reportUsage('colorScaleGenerated', {
+            baseColor: AppState.baseColor,
+            scaleConfiguration: AppState.scaleConfiguration,
+            useEnhancedAlgorithms: AppState.useEnhancedAlgorithms,
+            accessibilityMode: AppState.accessibilityMode,
+            generationTime: Math.round(AppState.lastGenerationTime)
+        });
         
         
     } catch (error) {
@@ -1464,6 +1481,7 @@ function createMinimalColorCard(color) {
  * Handle value copy button click for specific color format
  */
 async function handleValueCopyButtonClick(valueToCopy, format, buttonElement, textColor = null) {
+    reportUsage('colorValueCopied', { format });
     try {
         await navigator.clipboard.writeText(valueToCopy);
         
@@ -1674,6 +1692,12 @@ async function handleCopyExport() {
         
         await navigator.clipboard.writeText(content);
         showToast('Export code copied to clipboard!', 'success');
+        reportUsage('exportCopied', {
+            format: AppState.selectedExportFormat,
+            contentLength: content.length,
+            includeDarkMode: domElements.includeDarkMode.checked,
+            includeOriginal: domElements.includeOriginalScale.checked
+        });
         
         // Track successful copy
         if (typeof window.ErrorHandler !== 'undefined') {
@@ -1757,6 +1781,7 @@ function handleDownloadExport() {
     URL.revokeObjectURL(url);
     
     showToast(`Downloaded ${filename}`, 'success');
+    reportUsage('exportDownloaded', { format, fileSize: blob.size });
 }
 
 /**
@@ -2600,6 +2625,7 @@ function handleStickyPreviewClick() {
  * Open preview lightbox
  */
 function openPreviewLightbox() {
+    reportUsage('previewOpened', {});
     // Clone the live preview section content
     const livePreviewSection = document.getElementById('livePreviewSection');
     if (!livePreviewSection) {

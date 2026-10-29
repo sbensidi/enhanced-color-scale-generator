@@ -3,8 +3,13 @@
  * Privacy-focused analytics for Color Scale Generator
  */
 
+// Google Analytics 4 measurement ID (GA → Admin → Data streams)
+const GA_MEASUREMENT_ID = 'G-0VY3JCRCX8';
+
 class Analytics {
     constructor() {
+        this.initialized = false;
+        this.generateTimer = null;
         this.isEnabled = this.shouldEnableAnalytics();
         this.sessionId = this.getSessionId();
         this.pageLoadTime = Date.now();
@@ -44,11 +49,11 @@ class Analytics {
     }
 
     init() {
-        // Initialize Google Analytics 4 if available
+        if (this.initialized) return;
+        this.initialized = true;
+
+        // Initialize Google Analytics 4 (its config sends the page_view itself)
         this.initializeGA4();
-        
-        // Track page view
-        this.trackPageView();
         
         // Setup automatic event tracking
         this.setupEventTracking();
@@ -63,14 +68,14 @@ class Analytics {
             // Load Google Analytics 4
             const script = document.createElement('script');
             script.async = true;
-            script.src = 'https://www.googletagmanager.com/gtag/js?id=G-0VY3JCRCX8';
+            script.src = `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`;
             document.head.appendChild(script);
 
             // Initialize gtag
             window.dataLayer = window.dataLayer || [];
             window.gtag = function() { dataLayer.push(arguments); };
             gtag('js', new Date());
-            gtag('config', 'G-0VY3JCRCX8', {
+            gtag('config', GA_MEASUREMENT_ID, {
                 anonymize_ip: true,
                 allow_google_signals: false,
                 allow_ad_personalization_signals: false
@@ -89,14 +94,19 @@ class Analytics {
     }
 
     setupEventTracking() {
-        // Track color scale generations
+        // Track color scale generations — debounced, since dragging the
+        // color picker regenerates the scale on every input event
         document.addEventListener('colorScaleGenerated', (event) => {
-            this.trackEvent('generate_color_scale', {
-                scale_type: event.detail.scaleConfiguration,
-                enhanced_algorithms: event.detail.useEnhancedAlgorithms,
-                accessibility_mode: event.detail.accessibilityMode,
-                generation_time_ms: event.detail.generationTime
-            });
+            clearTimeout(this.generateTimer);
+            this.generateTimer = setTimeout(() => {
+                this.trackEvent('generate_color_scale', {
+                    base_color: event.detail.baseColor,
+                    scale_type: event.detail.scaleConfiguration,
+                    enhanced_algorithms: event.detail.useEnhancedAlgorithms,
+                    accessibility_mode: event.detail.accessibilityMode,
+                    generation_time_ms: event.detail.generationTime
+                });
+            }, 1500);
         });
 
         // Track export actions
@@ -122,6 +132,18 @@ class Analytics {
             this.trackEvent('change_theme', {
                 theme: event.detail.theme
             });
+        });
+
+        // Track copying a single color value (HEX / RGB / HSL…)
+        document.addEventListener('colorValueCopied', (event) => {
+            this.trackEvent('copy_color_value', {
+                value_format: event.detail.format
+            });
+        });
+
+        // Track opening the full-screen preview
+        document.addEventListener('previewOpened', () => {
+            this.trackEvent('open_preview');
         });
 
         // Track enhanced algorithm usage
@@ -247,6 +269,7 @@ class Analytics {
     // User consent management
     enableAnalytics() {
         localStorage.removeItem('analytics_opt_out');
+        window[`ga-disable-${GA_MEASUREMENT_ID}`] = false;
         this.isEnabled = true;
         this.init();
         this.trackEvent('analytics_enabled');
@@ -254,8 +277,9 @@ class Analytics {
 
     disableAnalytics() {
         localStorage.setItem('analytics_opt_out', 'true');
+        // Stops gtag from sending anything more this page load
+        window[`ga-disable-${GA_MEASUREMENT_ID}`] = true;
         this.isEnabled = false;
-        this.trackEvent('analytics_disabled');
     }
 
     isAnalyticsEnabled() {
